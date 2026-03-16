@@ -1,36 +1,293 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎮 SyncUp
 
-## Getting Started
+## 找到与你节奏一致的游戏搭子
 
-First, run the development server:
+> 在游戏里，最难匹配的从来不是段位。\
+> **而是人。**
 
-```bash
+------------------------------------------------------------------------
+
+## 🌌 每个玩家，都有自己的节奏
+
+有人喜欢：
+
+-   冲分上分
+-   策略运营
+-   沟通协作
+
+也有人更喜欢：
+
+-   轻松娱乐
+-   随缘开黑
+-   探索世界
+
+问题是------
+
+**游戏的匹配系统，只匹配技术。**
+
+却从不匹配：
+
+节奏\
+性格\
+沟通方式\
+游戏理念
+
+于是我们常常遇到：
+
+-   想认真打，队友在娱乐\
+-   想轻松玩，队友在指挥\
+-   想长期开黑，却只打一局就散
+
+------------------------------------------------------------------------
+
+# 🎯 SyncUp 想解决一件事
+
+> **让你找到真正适合一起玩的搭子。**
+
+不是随机队友。
+
+而是：
+
+**节奏一致的人。**
+
+------------------------------------------------------------------------
+
+# 🧠 游戏人格系统
+
+SyncUp 的核心是一个 **Game Personality（游戏人格）系统**。
+
+通过 **16 个问题**，构建你的游戏人格。
+
+生成一个专属人格编码：
+
+BTR-F
+
+结构：
+
+两位主编码 + 一位活跃标签
+
+### 第一位：游戏风格
+
+  类型   含义
+  ------ ------------
+  A      主动进攻型
+  B      稳健平衡型
+  S      沟通协作型
+
+### 第二位：游戏偏好
+
+  类型   含义
+  ------ ----------
+  C      竞技对抗
+  T      团队共斗
+  E      探索体验
+
+### 活跃标签
+
+  类型   含义
+  ------ ----------
+  F      高频玩家
+  L      轻量玩家
+
+示例：
+
+BTR-F\
+稳健平衡型 · 组队共斗型 · 成长养成偏好 · 高频玩家
+
+这种玩家通常：
+
+-   注重节奏与判断
+-   重视团队协作
+-   喜欢长期成长
+-   适合长期游戏搭子
+
+------------------------------------------------------------------------
+
+# 🎮 产品体验流程
+
+进入应用\
+↓\
+完成游戏人格测试\
+↓\
+生成玩家档案\
+↓\
+设置开黑条件\
+↓\
+匹配节奏一致的玩家\
+↓\
+进入语音房\
+↓\
+开始游戏
+
+------------------------------------------------------------------------
+
+# 🧩 功能设计
+
+## ① 游戏人格测试
+
+16 个轻量问题判断：
+
+-   游戏时长
+-   协作方式
+-   节奏偏好
+-   游戏动机
+
+生成你的 **游戏人格**。
+
+------------------------------------------------------------------------
+
+## ② 玩家主页
+
+每位玩家都会拥有自己的 **游戏身份卡**：
+
+-   人格编码
+-   游戏风格
+-   偏好类型
+-   活跃度
+
+例如：
+
+BTR-F\
+阿米娅\
+稳健平衡 · 组队共斗 · 成长养成
+
+------------------------------------------------------------------------
+
+## ③ 找游戏搭子
+
+你可以选择：
+
+-   想玩的游戏
+-   自己的风格
+-   想匹配的队友
+-   队伍人数
+
+例如：
+
+游戏：英雄联盟\
+模式：双排\
+目标：高沟通配合
+
+系统会寻找 **节奏最匹配的玩家**。
+
+------------------------------------------------------------------------
+
+## ④ 自动匹配
+
+匹配成功后：
+
+系统自动创建房间。
+
+玩家可以：
+
+-   先聊天
+-   确认节奏
+-   确认分工
+
+再进入游戏。
+
+------------------------------------------------------------------------
+
+## ⑤ 语音房
+
+房间中支持：
+
+-   聊天
+-   语音
+-   战术沟通
+
+体验更像：
+
+朋友开黑
+
+而不是：
+
+随机匹配。
+
+------------------------------------------------------------------------
+
+# 🖼 Demo 界面
+
+Demo 包含以下界面：
+
+-   登录页
+-   游戏人格测试
+-   人格结果
+-   玩家主页
+-   匹配设置
+-   匹配动画
+-   语音房
+
+------------------------------------------------------------------------
+
+# ⚙ 技术栈
+
+Next.js\
+React\
+TypeScript\
+TailwindCSS
+
+------------------------------------------------------------------------
+
+# 🚀 本地运行
+
+安装依赖
+
+npm install
+
+启动项目
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+打开浏览器
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+------------------------------------------------------------------------
 
-## Learn More
+# 🌍 为什么做这个项目
 
-To learn more about Next.js, take a look at the following resources:
+因为游戏中最重要的不是：
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+技术\
+段位\
+装备
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+而是：
 
-## Deploy on Vercel
+默契\
+节奏\
+沟通
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+真正好的游戏体验，来自于：
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**合适的人。**
+
+------------------------------------------------------------------------
+
+# 🧭 未来方向
+
+未来可能加入：
+
+-   AI 游戏人格分析
+-   自动推荐搭子
+-   玩家关系网络
+-   游戏社区
+-   开黑记录
+-   游戏 Vlog
+
+------------------------------------------------------------------------
+
+# ⭐ 如果你喜欢这个项目
+
+欢迎 Star ⭐
+
+------------------------------------------------------------------------
+
+# 🎮 最后
+
+也许你也遇到过：
+
+打一局游戏，却很希望还能再和这个人一起玩。
+
+**SyncUp 希望让这种事情更容易发生。**
