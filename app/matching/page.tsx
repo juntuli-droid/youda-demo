@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { apiRequest } from "../lib/client/api"
 
 type MatchDraft = {
   game: string
@@ -14,6 +15,7 @@ type MatchDraft = {
 export default function MatchingPage() {
   const router = useRouter()
   const [matchDraft, setMatchDraft] = useState<MatchDraft | null>(null)
+  const [error, setError] = useState("")
 
   useEffect(() => {
     const raw = localStorage.getItem("latestMatchDraft")
@@ -22,11 +24,44 @@ export default function MatchingPage() {
       setMatchDraft(JSON.parse(raw))
     }
 
-    const timer = setTimeout(() => {
-      router.push("/room")
-    }, 3000)
+    const requestId = localStorage.getItem("latestMatchRequestId")
+    if (!requestId) {
+      setError("匹配请求不存在，请返回重新发起匹配")
+      return
+    }
 
-    return () => clearTimeout(timer)
+    let cancelled = false
+    let attempts = 0
+    const maxAttempts = 12
+
+    const poll = async () => {
+      if (cancelled) return
+      attempts += 1
+
+      try {
+        await apiRequest<{
+          requestId: string
+          status: string
+        }>(`/api/match/request/${requestId}`)
+
+        router.push("/room")
+        return
+      } catch {
+        if (attempts >= maxAttempts) {
+          setError("匹配超时，请稍后重试")
+          return
+        }
+      }
+
+      setTimeout(poll, 1000)
+    }
+
+    const timer = setTimeout(poll, 1200)
+
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
   }, [router])
 
   return (
@@ -46,6 +81,12 @@ export default function MatchingPage() {
           <p className="text-gray-400 leading-7 mb-8">
             我们正在根据你的游戏、风格偏好和队伍人数，寻找更合拍的队友。
           </p>
+
+          {error ? (
+            <div className="mb-8 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+              {error}
+            </div>
+          ) : null}
 
           <div className="grid grid-cols-3 gap-4 text-sm">
             <InfoBox label="当前游戏" value={matchDraft?.game || "英雄联盟"} />

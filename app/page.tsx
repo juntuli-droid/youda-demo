@@ -11,6 +11,15 @@ export default function HomePage() {
     router.push("/personality")
   }
 
+  const handlePhoneLogin = () => {
+    router.push("/login")
+  }
+
+  const handleWechatLogin = () => {
+    startNewDemoSession()
+    router.push("/personality")
+  }
+
   return (
     <div className="min-h-screen flex bg-[#1e2124] text-white">
       <aside className="w-20 bg-[#17191c] flex flex-col items-center py-6 space-y-4">
@@ -39,11 +48,17 @@ export default function HomePage() {
               先体验 Demo
             </button>
 
-            <button className="w-full py-4 rounded-2xl bg-[#363b42] text-gray-300 hover:bg-[#414751] transition">
+            <button
+              onClick={handlePhoneLogin}
+              className="w-full py-4 rounded-2xl bg-[#363b42] text-gray-300 hover:bg-[#414751] transition"
+            >
               手机号登录
             </button>
 
-            <button className="w-full py-4 rounded-2xl bg-[#363b42] text-gray-300 hover:bg-[#414751] transition">
+            <button
+              onClick={handleWechatLogin}
+              className="w-full py-4 rounded-2xl bg-[#363b42] text-gray-300 hover:bg-[#414751] transition"
+            >
               微信登录
             </button>
           </div>

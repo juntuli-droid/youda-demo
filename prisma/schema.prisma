@@ -1,0 +1,203 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MatchRequestStatus {
+  pending
+  matched
+  cancelled
+}
+
+enum MatchResultStatus {
+  selected
+  candidate
+  rejected
+}
+
+enum RoomStatus {
+  open
+  closed
+}
+
+enum MessageType {
+  user
+  system
+}
+
+model User {
+  id            String                     @id @default(uuid())
+  authUserId    String                     @unique
+  nickname      String
+  avatarUrl     String?
+  authProvider  String
+  createdAt     DateTime                   @default(now())
+  updatedAt     DateTime                   @updatedAt
+  credential    UserCredential?
+  loginAttempts LoginAttempt[]
+  personality   GamePersonalityProfile?
+  answers       PersonalityAnswer[]
+  matchRequests MatchRequest[]
+  matchResults  MatchResult[]              @relation("MatchedUserResults")
+  roomMembers   RoomMember[]
+  messages      Message[]
+  gameLogs      GameLog[]
+}
+
+model UserCredential {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  phone          String   @unique
+  passwordHash   String
+  passwordSalt   String
+  failedAttempts Int      @default(0)
+  captchaSeed    String?
+  lockedUntil    DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([phone])
+  @@map("user_credentials")
+}
+
+model LoginAttempt {
+  id          String   @id @default(uuid())
+  userId      String?
+  phone       String
+  success     Boolean
+  failureCode String?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([phone, createdAt])
+  @@map("login_attempts")
+}
+
+model GamePersonalityProfile {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  styleCode      String
+  personalityCode String
+  preferenceCode String
+  activityTag    String
+  fullCode       String
+  summaryText    String
+  character      String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PersonalityAnswer {
+  id          String   @id @default(uuid())
+  userId      String
+  questionId  Int
+  answerValue String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model Game {
+  id            String         @id @default(uuid())
+  name          String
+  slug          String         @unique
+  iconUrl       String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  matchRequests MatchRequest[]
+  rooms         Room[]
+  gameLogs      GameLog[]
+}
+
+model MatchRequest {
+  id          String              @id @default(uuid())
+  userId      String
+  gameId      String
+  ownStyle    String
+  targetStyle String
+  teamSize    String
+  status      MatchRequestStatus  @default(pending)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game        Game                @relation(fields: [gameId], references: [id], onDelete: Restrict)
+  results     MatchResult[]
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
+model MatchResult {
+  id            String            @id @default(uuid())
+  requestId     String
+  matchedUserId String
+  score         Int
+  status        MatchResultStatus @default(candidate)
+  createdAt     DateTime          @default(now())
+  request       MatchRequest      @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  matchedUser   User              @relation("MatchedUserResults", fields: [matchedUserId], references: [id], onDelete: Cascade)
+
+  @@index([requestId, score])
+}
+
+model Room {
+  id        String      @id @default(uuid())
+  gameId    String
+  roomType  String
+  status    RoomStatus  @default(open)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  game      Game        @relation(fields: [gameId], references: [id], onDelete: Restrict)
+  members   RoomMember[]
+  messages  Message[]
+}
+
+model RoomMember {
+  id          String   @id @default(uuid())
+  roomId       String
+  userId       String
+  readyStatus  Boolean @default(false)
+  voiceStatus  String  @default("offline")
+  joinedAt     DateTime @default(now())
+  room         Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+  @@index([roomId, joinedAt])
+}
+
+model Message {
+  id         String      @id @default(uuid())
+  roomId      String
+  senderId    String
+  content     String
+  messageType MessageType @default(user)
+  createdAt   DateTime    @default(now())
+  room        Room        @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  sender      User        @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([roomId, createdAt])
+}
+
+model GameLog {
+  id        String   @id @default(uuid())
+  userId    String
+  gameId    String
+  title     String
+  content   String
+  mediaUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Restrict)
+
+  @@index([userId, createdAt])
+}

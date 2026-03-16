@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { apiRequest } from "../lib/client/api"
 
 export default function MatchPage() {
   const router = useRouter()
@@ -9,6 +10,48 @@ export default function MatchPage() {
   const [myStyle, setMyStyle] = useState("认真冲分")
   const [targetStyle, setTargetStyle] = useState("高沟通配合")
   const [teamSize, setTeamSize] = useState("双排")
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState("")
+
+  const handleStartMatch = async () => {
+    setSubmitting(true)
+    setError("")
+
+    const draft = {
+      game,
+      playStyle: myStyle,
+      targetStyle,
+      teamMode: teamSize,
+      createdAt: new Date().toISOString()
+    }
+
+    try {
+      const response = await apiRequest<{
+        requestId: string
+        status: string
+        roomId: string
+      }>("/api/match/request", {
+        method: "POST",
+        body: JSON.stringify({
+          game,
+          ownStyle: myStyle,
+          targetStyle,
+          teamSize
+        })
+      })
+
+      localStorage.setItem("latestMatchDraft", JSON.stringify(draft))
+      localStorage.setItem("latestMatchRequestId", response.requestId)
+      localStorage.setItem("currentRoomId", response.roomId)
+      router.push("/matching")
+    } catch (requestError) {
+      const message =
+        requestError instanceof Error ? requestError.message : "匹配服务暂不可用"
+      setError(message)
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#1e2124] text-white flex">
@@ -59,11 +102,17 @@ export default function MatchPage() {
           </div>
 
           <div className="mt-10">
+            {error ? (
+              <div className="mb-4 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                {error}
+              </div>
+            ) : null}
             <button
-              onClick={() => router.push("/matching")}
-              className="w-full py-5 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold text-xl hover:opacity-90 transition"
+              onClick={handleStartMatch}
+              disabled={submitting}
+              className="w-full py-5 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold text-xl hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              🎮 开始匹配游戏搭子
+              {submitting ? "🎮 匹配中..." : "🎮 开始匹配游戏搭子"}
             </button>
           </div>
         </div>

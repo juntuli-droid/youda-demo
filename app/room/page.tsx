@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
+import { apiRequest } from "../lib/client/api"
 
 type MatchDraft = {
   game: string
@@ -26,6 +27,37 @@ type ChatMessage = {
   content: string
   time: string
   isSelf?: boolean
+}
+
+type RoomDetailPayload = {
+  room: {
+    id: string
+    status: string
+    roomType: string
+    game: {
+      id: string
+      name: string
+    }
+  }
+  members: Array<{
+    userId: string
+    nickname: string
+    readyStatus: boolean
+    voiceStatus: string
+    joinedAt: string
+  }>
+}
+
+type RoomMessagePayload = {
+  items: Array<{
+    id: string
+    content: string
+    createdAt: string
+    sender: {
+      nickname: string
+    }
+  }>
+  nextCursor: string | null
 }
 
 function getTeammatesByTeamMode(teamMode?: string): Teammate[] {
@@ -114,14 +146,17 @@ function getInitialMessages(matchDraft: MatchDraft | null): ChatMessage[] {
 export default function RoomPage() {
   const router = useRouter()
   const [matchDraft, setMatchDraft] = useState<MatchDraft | null>(null)
+  const [roomId, setRoomId] = useState("")
+  const [roomDetail, setRoomDetail] = useState<RoomDetailPayload | null>(null)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState("")
+  const [error, setError] = useState("")
+  const [sending, setSending] = useState(false)
 
   useEffect(() => {
     const raw = localStorage.getItem("latestMatchDraft")
     if (raw) {
       const parsed = JSON.parse(raw) as MatchDraft
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMatchDraft(parsed)
 
       const vlogPrefill = {
@@ -134,53 +169,140 @@ export default function RoomPage() {
 
       localStorage.setItem("vlogPrefill", JSON.stringify(vlogPrefill))
       setMessages(getInitialMessages(parsed))
+    }
+
+    const activeRoomId = localStorage.getItem("currentRoomId") || ""
+    if (!activeRoomId) {
+      if (!raw) {
+        setMessages(getInitialMessages(null))
+      }
       return
     }
 
-    setMessages(getInitialMessages(null))
+    setRoomId(activeRoomId)
+
+    const loadRoom = async () => {
+      try {
+        const [detail, messageData] = await Promise.all([
+          apiRequest<RoomDetailPayload>(`/api/rooms/${activeRoomId}`),
+          apiRequest<RoomMessagePayload>(`/api/rooms/${activeRoomId}/messages`)
+        ])
+
+        setRoomDetail(detail)
+        if (messageData.items.length > 0) {
+          const profileRaw = localStorage.getItem("authUserProfile")
+          const myNickname = profileRaw
+            ? (JSON.parse(profileRaw) as { nickname?: string }).nickname || "你"
+            : "你"
+
+          setMessages(
+            messageData.items.map((item) => ({
+              id: item.id,
+              sender: item.sender.nickname,
+              role: "房间成员",
+              content: item.content,
+              time: new Date(item.createdAt).toLocaleTimeString("zh-CN", {
+                hour: "2-digit",
+                minute: "2-digit"
+              }),
+              isSelf: item.sender.nickname === myNickname
+            }))
+          )
+        }
+      } catch (requestError) {
+        const message =
+          requestError instanceof Error
+            ? requestError.message
+            : "房间信息加载失败，请稍后重试"
+        setError(message)
+      }
+    }
+
+    loadRoom()
   }, [])
 
   const teammates = useMemo(
-    () => getTeammatesByTeamMode(matchDraft?.teamMode),
-    [matchDraft]
+    () =>
+      roomDetail
+        ? roomDetail.members.map((member) => ({
+            name: member.nickname,
+            tag: member.voiceStatus === "connected" ? "语音已连接" : "等待连接",
+            personality: "SCP-T",
+            active: member.voiceStatus !== "offline",
+            ready: member.readyStatus
+          }))
+        : getTeammatesByTeamMode(matchDraft?.teamMode),
+    [matchDraft, roomDetail]
   )
 
   const onlineCount = teammates.filter((item) => item.active).length
   const readyCount = teammates.filter((item) => item.ready).length
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     const value = input.trim()
     if (!value) return
 
-    const newMessage: ChatMessage = {
-      id: crypto.randomUUID(),
-      sender: "你",
-      role: "ACP-F · 认真冲分型",
-      content: value,
-      time: new Date().toLocaleTimeString("zh-CN", {
-        hour: "2-digit",
-        minute: "2-digit"
-      }),
-      isSelf: true
-    }
-
-    setMessages((prev) => [...prev, newMessage])
-    setInput("")
-
-    setTimeout(() => {
-      const autoReply: ChatMessage = {
+    if (!roomId) {
+      const fallbackMessage: ChatMessage = {
         id: crypto.randomUUID(),
-        sender: teammates[1]?.name || "队友",
-        role: `${teammates[1]?.personality || "SCP-T"} · ${teammates[1]?.tag || "高沟通配合"}`,
-        content: "收到，我这边没问题，咱们统一一下节奏就可以直接进语音。",
+        sender: "你",
+        role: "ACP-F · 认真冲分型",
+        content: value,
         time: new Date().toLocaleTimeString("zh-CN", {
           hour: "2-digit",
           minute: "2-digit"
+        }),
+        isSelf: true
+      }
+      setMessages((prev) => [...prev, fallbackMessage])
+      setInput("")
+      return
+    }
+
+    setSending(true)
+    setError("")
+
+    try {
+      const saved = await apiRequest<{
+        id: string
+        content: string
+        createdAt: string
+        sender: {
+          nickname: string
+        }
+      }>(`/api/rooms/${roomId}/messages`, {
+        method: "POST",
+        body: JSON.stringify({
+          content: value
         })
+      })
+
+      const profileRaw = localStorage.getItem("authUserProfile")
+      const myNickname = profileRaw
+        ? (JSON.parse(profileRaw) as { nickname?: string }).nickname || "你"
+        : "你"
+
+      const newMessage: ChatMessage = {
+        id: saved.id,
+        sender: saved.sender.nickname,
+        role: "房间成员",
+        content: saved.content,
+        time: new Date(saved.createdAt).toLocaleTimeString("zh-CN", {
+          hour: "2-digit",
+          minute: "2-digit"
+        }),
+        isSelf: saved.sender.nickname === myNickname
       }
 
-      setMessages((prev) => [...prev, autoReply])
-    }, 900)
+      setMessages((prev) => [...prev, newMessage])
+      setInput("")
+    } catch (requestError) {
+      const message =
+        requestError instanceof Error ? requestError.message : "消息发送失败"
+      setError(message)
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
@@ -202,6 +324,12 @@ export default function RoomPage() {
                 你们可以先在下方聊天，确认分工、节奏和开麦习惯，再进入语音通话。
               </p>
             </div>
+
+            {error ? (
+              <div className="mb-6 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                {error}
+              </div>
+            ) : null}
 
             <div className="grid sm:grid-cols-2 gap-5 mb-6">
               {teammates.map((user) => (
@@ -314,9 +442,10 @@ export default function RoomPage() {
                 />
                 <button
                   onClick={handleSendMessage}
-                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:opacity-90 transition"
+                  disabled={sending}
+                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  发送
+                  {sending ? "发送中" : "发送"}
                 </button>
               </div>
             </div>
@@ -328,7 +457,7 @@ export default function RoomPage() {
             <div className="space-y-4 mb-8">
               <RoomInfo
                 label="房间名称"
-                value={`${matchDraft?.game || "英雄联盟"} · ${matchDraft?.teamMode || "双排"}房`}
+                value={`${roomDetail?.room.game.name || matchDraft?.game || "英雄联盟"} · ${roomDetail?.room.roomType || matchDraft?.teamMode || "双排"}房`}
               />
               <RoomInfo label="偏好风格" value={matchDraft?.targetStyle || "高沟通配合"} />
               <RoomInfo label="语音状态" value="已连接" />
