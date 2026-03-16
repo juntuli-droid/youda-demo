@@ -15,7 +15,7 @@ export default function HomePage() {
     <div className="min-h-screen flex bg-[#1e2124] text-white">
       <aside className="w-20 bg-[#17191c] flex flex-col items-center py-6 space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
-          S
+          有搭
         </div>
         <div className="w-12 h-12 rounded-2xl bg-[#2b2f33]" />
         <div className="w-12 h-12 rounded-2xl bg-[#2b2f33]" />
@@ -24,7 +24,7 @@ export default function HomePage() {
       <main className="flex-1 flex items-center justify-center px-6">
         <div className="w-full max-w-md bg-[#2b2f33] rounded-3xl shadow-2xl p-10">
           <div className="mb-10">
-            <p className="text-sm text-indigo-300 mb-3">SYNCUP</p>
+            <p className="text-sm text-indigo-300 mb-3">有搭</p>
             <h1 className="text-4xl font-bold mb-3">找到你的游戏搭子</h1>
             <p className="text-gray-400 leading-7">
               不只是队友，而是与你节奏一致、能一起长期开黑的人。
