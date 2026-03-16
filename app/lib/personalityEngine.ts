@@ -1,5 +1,8 @@
-import type { Question, QuestionCategory, ScoreKey } from "/Users/lijuntu/syncup-demo/app/data/personalityQuestions.ts"
-
+import type {
+  Question,
+  QuestionCategory,
+  ScoreKey
+} from "../data/personalityQuestions"
 type ScoreMap = Partial<Record<ScoreKey, number>>
 
 const STYLE_KEYS: ScoreKey[] = ["A", "B", "S"]
