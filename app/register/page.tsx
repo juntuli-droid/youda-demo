@@ -85,7 +85,15 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="game-shell">
+    <div
+      className="game-shell"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(14,26,37,0.78), rgba(14,26,37,0.88)), url('/assets/gameImages/background/bg-04.webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}
+    >
       <aside className="game-sidebar flex flex-col items-center py-6 space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
           有搭
@@ -102,6 +110,10 @@ export default function RegisterPage() {
             <p className="text-gray-400 leading-7">
               完成注册后即可创建专属游戏人格，开始匹配长期搭子。
             </p>
+            <div className="mt-4 flex gap-2">
+              <span className="neon-chip">Riot 风格暗色布局</span>
+              <span className="neon-chip">Kook 信息密度</span>
+            </div>
           </div>
 
           <div className="space-y-4">

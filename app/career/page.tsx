@@ -62,8 +62,16 @@ export default function CareerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1e2124] text-white flex">
-      <aside className="w-20 bg-[#17191c] flex flex-col items-center py-6 space-y-4">
+    <div
+      className="game-shell"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(14,26,37,0.8), rgba(14,26,37,0.92)), url('/assets/gameImages/background/bg-05.webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}
+    >
+      <aside className="game-sidebar flex flex-col items-center py-6 space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
           S
         </div>
@@ -71,7 +79,7 @@ export default function CareerPage() {
 
       <main className="flex-1 px-6 py-10">
         <div className="max-w-6xl mx-auto grid xl:grid-cols-[1fr_1.1fr] gap-6">
-          <section className="bg-[#2b2f33] rounded-3xl shadow-2xl p-8">
+          <section className="game-panel p-8">
             <p className="text-sm text-indigo-300 mb-3">我的游戏生涯</p>
             <h1 className="text-3xl font-bold mb-3">记录你的成长轨迹</h1>
             <p className="text-gray-400 leading-8 mb-8">
@@ -85,7 +93,7 @@ export default function CareerPage() {
                   onChange={(e) =>
                     setForm((prev) => ({ ...prev, game: e.target.value }))
                   }
-                  className="w-full bg-[#363b42] border border-[#4a515b] rounded-xl px-4 py-3 text-white outline-none"
+                  className="neon-input"
                 >
                   <option value="英雄联盟">英雄联盟</option>
                   <option value="王者荣耀">王者荣耀</option>
@@ -103,7 +111,7 @@ export default function CareerPage() {
                     setForm((prev) => ({ ...prev, rank: e.target.value }))
                   }
                   placeholder="例如：钻石 2 / 荣耀王者 / 超凡先锋"
-                  className="w-full bg-[#363b42] border border-[#4a515b] rounded-xl px-4 py-3 text-white placeholder:text-gray-500 outline-none"
+                  className="neon-input"
                 />
               </InputGroup>
 
@@ -114,7 +122,7 @@ export default function CareerPage() {
                     setForm((prev) => ({ ...prev, duration: e.target.value }))
                   }
                   placeholder="例如：620 小时 / 3 个赛季 / 2 年"
-                  className="w-full bg-[#363b42] border border-[#4a515b] rounded-xl px-4 py-3 text-white placeholder:text-gray-500 outline-none"
+                  className="neon-input"
                 />
               </InputGroup>
 
@@ -125,7 +133,7 @@ export default function CareerPage() {
                     setForm((prev) => ({ ...prev, achievement: e.target.value }))
                   }
                   placeholder="例如：国服英雄 / 巅峰赛前 1% / 全成就达成"
-                  className="w-full bg-[#363b42] border border-[#4a515b] rounded-xl px-4 py-3 text-white placeholder:text-gray-500 outline-none"
+                  className="neon-input"
                 />
               </InputGroup>
 
@@ -137,21 +145,21 @@ export default function CareerPage() {
                   }
                   rows={5}
                   placeholder="写写你对这段游戏生涯的总结，比如打法变化、心态变化、最难忘的一次上分。"
-                  className="w-full bg-[#363b42] border border-[#4a515b] rounded-xl px-4 py-3 text-white placeholder:text-gray-500 outline-none resize-none"
+                  className="w-full neon-input resize-none"
                 />
               </InputGroup>
 
               <div className="grid md:grid-cols-2 gap-4 pt-2">
                 <button
                   onClick={handleSave}
-                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold text-lg hover:opacity-90 transition"
+                  className="w-full py-4 neon-btn font-semibold text-lg hover:opacity-90 transition"
                 >
                   保存游戏生涯
                 </button>
 
                 <button
                   onClick={() => router.push("/profile")}
-                  className="w-full py-4 rounded-2xl bg-[#363b42] border border-[#4a515b] font-semibold text-lg hover:bg-[#3c4148] transition"
+                  className="w-full py-4 neon-outline-btn font-semibold text-lg"
                 >
                   返回我的主页
                 </button>
@@ -159,7 +167,7 @@ export default function CareerPage() {
             </div>
           </section>
 
-          <section className="bg-[#2b2f33] rounded-3xl shadow-2xl p-8">
+          <section className="game-panel p-8">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <p className="text-sm text-indigo-300 mb-2">生涯档案</p>
@@ -170,14 +178,14 @@ export default function CareerPage() {
 
             <div className="space-y-4 max-h-[760px] overflow-y-auto pr-1">
               {records.length === 0 ? (
-                <div className="bg-[#363b42] rounded-2xl p-6">
+                <div className="game-panel p-6">
                   <p className="text-gray-400 leading-7">
                     你还没有保存任何游戏生涯。先写下你的代表游戏、段位和成就，让你的主页更完整。
                   </p>
                 </div>
               ) : (
                 records.map((item) => (
-                  <div key={item.id} className="bg-[#363b42] rounded-2xl p-5">
+                  <div key={item.id} className="game-panel p-5">
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <div>
                         <p className="text-xl font-semibold">{item.game}</p>
@@ -200,7 +208,7 @@ export default function CareerPage() {
                       <MiniInfo label="达成成就" value={item.achievement || "未填写"} />
                     </div>
 
-                    <div className="bg-[#2b2f33] rounded-xl p-4">
+                    <div className="game-panel p-4">
                       <p className="text-sm text-gray-400 mb-2">阶段总结</p>
                       <p className="text-gray-300 leading-7">
                         {item.note || "这条记录还没有填写总结。"}
@@ -234,7 +242,7 @@ function InputGroup({
 
 function MiniInfo({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-[#2b2f33] rounded-xl p-4">
+    <div className="game-panel p-4">
       <p className="text-sm text-gray-400 mb-2">{label}</p>
       <p className="font-semibold leading-7">{value}</p>
     </div>

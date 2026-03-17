@@ -21,7 +21,15 @@ export default function HomePage() {
   }
 
   return (
-    <div className="game-shell">
+    <div
+      className="game-shell"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(14,26,37,0.78), rgba(14,26,37,0.9)), url('/assets/gameImages/background/bg-02.webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}
+    >
       <aside className="game-sidebar flex flex-col items-center py-6 space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
           有搭
@@ -38,6 +46,10 @@ export default function HomePage() {
             <p className="text-gray-400 leading-7">
               不只是队友，而是与你节奏一致、能一起长期开黑的人。
             </p>
+            <div className="mt-4 flex gap-2">
+              <span className="neon-chip">匹配 · 聊天 · 成长</span>
+              <span className="neon-chip">Riot x Kook 风格</span>
+            </div>
           </div>
 
           <div className="space-y-4">

@@ -3,6 +3,7 @@ export type MemoryUser = {
   authUserId: string
   nickname: string
   authProvider: string
+  avatarUrl?: string | null
 }
 
 export type MemoryGame = {

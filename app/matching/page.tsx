@@ -65,15 +65,23 @@ export default function MatchingPage() {
   }, [router])
 
   return (
-    <div className="min-h-screen bg-[#1e2124] text-white flex">
-      <aside className="w-20 bg-[#17191c] flex flex-col items-center py-6 space-y-4">
+    <div
+      className="game-shell"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(14,26,37,0.78), rgba(14,26,37,0.9)), url('/assets/gameImages/background/bg-03.webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}
+    >
+      <aside className="game-sidebar flex flex-col items-center py-6 space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
           S
         </div>
       </aside>
 
       <main className="flex-1 flex items-center justify-center px-6">
-        <div className="w-full max-w-xl bg-[#2b2f33] rounded-3xl shadow-2xl p-12 text-center">
+        <div className="w-full max-w-xl game-panel p-12 text-center">
           <div className="w-20 h-20 mx-auto rounded-full border-4 border-indigo-500 border-t-transparent animate-spin mb-8" />
 
           <p className="text-sm text-indigo-300 mb-3">匹配中</p>
@@ -101,7 +109,7 @@ export default function MatchingPage() {
 
 function InfoBox({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-[#363b42] rounded-2xl py-5 px-3">
+    <div className="game-panel py-5 px-3">
       <p className="text-gray-400 mb-2">{label}</p>
       <p className="font-semibold">{value}</p>
     </div>

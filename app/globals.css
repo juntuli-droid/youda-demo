@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --bg-0: #0b1020;
-  --bg-1: #131a2f;
-  --bg-2: #1a2237;
+  --bg-0: #0e1a25;
+  --bg-1: #152634;
+  --bg-2: #1c2f41;
   --panel: rgba(23, 30, 52, 0.88);
   --panel-soft: rgba(33, 43, 66, 0.72);
   --line: rgba(117, 138, 178, 0.24);
   --text-main: #ecf3ff;
   --text-sub: #93a1bf;
-  --brand-1: #5f74ff;
-  --brand-2: #9e4dff;
-  --accent: #23d5ff;
+  --brand-1: #10b981;
+  --brand-2: #2dd4bf;
+  --accent: #10b981;
   --success: #2be887;
   --danger: #ff6c8a;
 }
@@ -44,7 +44,7 @@ body {
 .game-panel {
   background: linear-gradient(160deg, var(--panel) 0%, var(--panel-soft) 100%);
   border: 1px solid var(--line);
-  border-radius: 1.5rem;
+  border-radius: 8px;
   backdrop-filter: blur(10px);
   box-shadow:
     0 16px 40px rgba(6, 10, 21, 0.45),
@@ -55,9 +55,9 @@ body {
 .neon-btn {
   background: linear-gradient(110deg, var(--brand-1) 0%, var(--brand-2) 100%);
   color: #fff;
-  border-radius: 1rem;
+  border-radius: 8px;
   transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
-  box-shadow: 0 8px 24px rgba(92, 84, 255, 0.42);
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
 }
 
 .neon-btn:hover {
@@ -70,7 +70,7 @@ body {
   background: rgba(42, 52, 78, 0.72);
   border: 1px solid rgba(130, 154, 211, 0.25);
   color: #ced8ef;
-  border-radius: 1rem;
+  border-radius: 8px;
   transition: background 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
 }
 
@@ -84,7 +84,7 @@ body {
   width: 100%;
   background: rgba(31, 39, 60, 0.78);
   border: 1px solid rgba(121, 141, 186, 0.26);
-  border-radius: 0.9rem;
+  border-radius: 8px;
   padding: 0.78rem 1rem;
   color: var(--text-main);
   transition: border-color 0.16s ease, box-shadow 0.16s ease;

@@ -87,7 +87,15 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="game-shell">
+    <div
+      className="game-shell"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(14,26,37,0.78), rgba(14,26,37,0.86)), url('/assets/gameImages/background/bg-01.webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}
+    >
       <aside className="game-sidebar flex flex-col items-center py-6 space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
           有搭

@@ -6,6 +6,13 @@ export type PersonalityAsset = {
   banner: string
 }
 
+function normalizeAssetUrl(url: string) {
+  const cdnBase = process.env.NEXT_PUBLIC_ASSET_CDN_BASE_URL
+  if (!cdnBase) return url
+  if (!url.startsWith("/")) return url
+  return `${cdnBase.replace(/\/$/, "")}${url}`
+}
+
 export const personalityAssets: PersonalityAsset[] = [
   {
     codePrefix: "ACP",
@@ -65,11 +72,18 @@ export function withCatalogAsset(
   catalogAsset?: { portrait: string; avatar: string; banner: string }
 ) {
   const base = getPersonalityAsset(code)
-  if (!catalogAsset) return base
+  if (!catalogAsset) {
+    return {
+      ...base,
+      portrait: normalizeAssetUrl(base.portrait),
+      profileAvatar: normalizeAssetUrl(base.profileAvatar),
+      banner: normalizeAssetUrl(base.banner)
+    }
+  }
   return {
     ...base,
-    portrait: catalogAsset.portrait || base.portrait,
-    profileAvatar: catalogAsset.avatar || base.profileAvatar,
-    banner: catalogAsset.banner || base.banner
+    portrait: normalizeAssetUrl(catalogAsset.portrait || base.portrait),
+    profileAvatar: normalizeAssetUrl(catalogAsset.avatar || base.profileAvatar),
+    banner: normalizeAssetUrl(catalogAsset.banner || base.banner)
   }
 }

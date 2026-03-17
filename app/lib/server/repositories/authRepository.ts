@@ -15,6 +15,7 @@ type CredentialRow = {
 type MemoryUser = {
   id: string
   nickname: string
+  avatarUrl?: string | null
 }
 
 const globalMemoryStore = globalThis as unknown as {
@@ -94,7 +95,8 @@ export async function createUserWithCredential(args: {
     const store = getMemoryStore()
     const user: MemoryUser = {
       id: crypto.randomUUID(),
-      nickname: args.nickname
+      nickname: args.nickname,
+      avatarUrl: "/images/avatars/default.png"
     }
     const credential: CredentialRow = {
       id: crypto.randomUUID(),
@@ -111,7 +113,8 @@ export async function createUserWithCredential(args: {
     return {
       id: user.id,
       authUserId: `local_phone_${args.phone}`,
-      nickname: user.nickname
+        nickname: user.nickname,
+        avatarUrl: user.avatarUrl
     }
   }
 
@@ -121,7 +124,8 @@ export async function createUserWithCredential(args: {
         data: {
           authUserId: `local_phone_${args.phone}`,
           nickname: args.nickname,
-          authProvider: "local"
+          authProvider: "local",
+          avatarUrl: "/images/avatars/default.png"
         }
       })
 
@@ -141,7 +145,8 @@ export async function createUserWithCredential(args: {
     const store = getMemoryStore()
     const user: MemoryUser = {
       id: crypto.randomUUID(),
-      nickname: args.nickname
+      nickname: args.nickname,
+      avatarUrl: "/images/avatars/default.png"
     }
     const credential: CredentialRow = {
       id: crypto.randomUUID(),
@@ -158,7 +163,8 @@ export async function createUserWithCredential(args: {
     return {
       id: user.id,
       authUserId: `local_phone_${args.phone}`,
-      nickname: user.nickname
+      nickname: user.nickname,
+      avatarUrl: user.avatarUrl
     }
   }
 }
@@ -288,13 +294,16 @@ export async function getUserBasicById(userId: string) {
       where: { id: userId },
       select: {
         id: true,
-        nickname: true
+        nickname: true,
+        avatarUrl: true
       }
     })
   } catch (error) {
     if (!canFallbackToMemory(error)) throw error
     const store = getMemoryStore()
     const user = store.usersById.get(userId)
-    return user ? { id: user.id, nickname: user.nickname } : null
+    return user
+      ? { id: user.id, nickname: user.nickname, avatarUrl: user.avatarUrl || null }
+      : null
   }
 }

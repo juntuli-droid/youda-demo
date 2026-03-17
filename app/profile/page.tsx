@@ -13,6 +13,9 @@ import {
 import { withCatalogAsset } from "../lib/personalityAssets"
 import LazyGameImage from "../components/LazyGameImage"
 import { loadAssetCatalog } from "../lib/assetCatalogClient"
+import { loadAvatarProfile, saveAvatarProfile } from "../lib/avatarProfile"
+import { loadAvatarMap, pickAvatarByPersonality } from "../lib/avatarMapClient"
+import { loadAvatarGallery, type AvatarGalleryConfig } from "../lib/avatarGalleryClient"
 
 type ProfileResult = ReturnType<typeof calculatePersonality> &
   ReturnType<typeof getPersonalityMeta> & {
@@ -49,6 +52,12 @@ export default function ProfilePage() {
     avatar: string
     banner: string
   } | null>(null)
+  const [avatarSrc, setAvatarSrc] = useState("")
+  const [avatarGallery, setAvatarGallery] = useState<AvatarGalleryConfig | null>(null)
+  const [avatarModalOpen, setAvatarModalOpen] = useState(false)
+  const [avatarPage, setAvatarPage] = useState(1)
+  const [avatarKeyword, setAvatarKeyword] = useState("")
+  const [toast, setToast] = useState("")
 
   useEffect(() => {
     const raw = localStorage.getItem("personalityScores")
@@ -79,6 +88,14 @@ export default function ProfilePage() {
             setCatalogAsset(catalog.assets[prefix])
           }
         })
+        loadAvatarMap().then((map) => {
+          const selected = pickAvatarByPersonality(map, personality.code)
+          const localProfile = loadAvatarProfile()
+          const src = localProfile.src || selected?.image || "/assets/gameImages/avatar/character-01.webp"
+          setAvatarSrc(src)
+          saveAvatarProfile({ src })
+        })
+        loadAvatarGallery().then((gallery) => setAvatarGallery(gallery))
       } else {
         setResult(null)
       }
@@ -95,6 +112,17 @@ export default function ProfilePage() {
 
     if (rawVlog) {
       setVlogList(JSON.parse(rawVlog))
+    }
+
+    if (!raw || !metaRaw || !currentSessionId) {
+      loadAvatarMap().then((map) => {
+        const selected = pickAvatarByPersonality(map)
+        const localProfile = loadAvatarProfile()
+        const src = localProfile.src || selected?.image || "/assets/gameImages/avatar/character-01.webp"
+        setAvatarSrc(src)
+        saveAvatarProfile({ src })
+      })
+      loadAvatarGallery().then((gallery) => setAvatarGallery(gallery))
     }
   }, [])
 
@@ -146,6 +174,18 @@ export default function ProfilePage() {
 
   const displayCharacter = result.character || "未命名人格"
   const visual = withCatalogAsset(result.code, catalogAsset || undefined)
+  const avatarItems = avatarGallery?.items || []
+  const pageSize = 20
+  const filteredAvatarItems = avatarItems.filter((item) =>
+    avatarKeyword.trim()
+      ? item.character.toLowerCase().includes(avatarKeyword.trim().toLowerCase())
+      : true
+  )
+  const pagedAvatarItems = filteredAvatarItems.slice(
+    (avatarPage - 1) * pageSize,
+    avatarPage * pageSize
+  )
+  const totalPages = Math.max(Math.ceil(filteredAvatarItems.length / pageSize), 1)
 
   return (
     <div className="game-shell">
@@ -171,12 +211,16 @@ export default function ProfilePage() {
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
               <div className="flex-1">
                 <div className="flex items-center gap-5 mb-6">
-                  <LazyGameImage
-                    src={visual.profileAvatar}
-                    fallbackSrc="/assets/personality/default-avatar.svg"
-                    alt={`${displayCharacter} 头像`}
-                    className="w-20 h-20 rounded-3xl border border-[rgba(126,156,224,0.35)] object-cover"
-                  />
+                  <div className="w-20 h-20 rounded-3xl overflow-hidden border border-[rgba(126,156,224,0.35)] shadow-[0_6px_16px_rgba(0,0,0,0.24)] hover:scale-110 transition-transform">
+                    <LazyGameImage
+                      src={avatarSrc || visual.profileAvatar}
+                      fallbackSrc="/assets/gameImages/avatar/character-01.webp"
+                      alt={`${displayCharacter} 头像`}
+                      className="w-20 h-20 object-cover"
+                      width={180}
+                      height={180}
+                    />
+                  </div>
 
                   <div>
                     <h1 className="text-[30px] md:text-[36px] font-bold leading-tight">
@@ -185,6 +229,16 @@ export default function ProfilePage() {
                     <p className="text-gray-400 mt-1">
                       {result.code} · {result.title}
                     </p>
+                    <button
+                      onClick={() => {
+                        setAvatarPage(1)
+                        setAvatarKeyword("")
+                        setAvatarModalOpen(true)
+                      }}
+                      className="mt-2 text-sm px-3 py-1.5 rounded-lg neon-outline-btn"
+                    >
+                      更换头像
+                    </button>
                   </div>
                 </div>
 
@@ -361,6 +415,82 @@ export default function ProfilePage() {
           </div>
         </div>
       </main>
+
+      {avatarModalOpen ? (
+        <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-[2px] flex items-center justify-center p-4">
+          <div className="w-full max-w-4xl game-panel p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold">更换头像</h3>
+              <button
+                onClick={() => setAvatarModalOpen(false)}
+                className="neon-outline-btn px-3 py-2 text-sm"
+              >
+                关闭
+              </button>
+            </div>
+            <div className="mb-4">
+              <input
+                value={avatarKeyword}
+                onChange={(e) => {
+                  setAvatarKeyword(e.target.value)
+                  setAvatarPage(1)
+                }}
+                placeholder="搜索角色名称"
+                className="neon-input"
+              />
+            </div>
+            <div className="grid grid-cols-4 md:grid-cols-5 gap-3 mb-4 max-h-[55vh] overflow-y-auto">
+              {pagedAvatarItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setAvatarSrc(item.image)
+                    saveAvatarProfile({ src: item.image })
+                    setToast(`已切换为 ${item.character}`)
+                    setAvatarModalOpen(false)
+                    setTimeout(() => setToast(""), 1600)
+                  }}
+                  className="rounded-xl overflow-hidden border border-[rgba(117,138,178,0.28)] hover:scale-110 active:shadow-[0_0_18px_rgba(16,185,129,0.45)] transition"
+                >
+                  <LazyGameImage
+                    src={item.image}
+                    fallbackSrc="/assets/gameImages/avatar/character-01.webp"
+                    alt={item.character}
+                    className="w-full h-24 object-cover"
+                    width={220}
+                    height={220}
+                  />
+                </button>
+              ))}
+            </div>
+            <div className="flex items-center justify-between">
+              <button
+                disabled={avatarPage <= 1}
+                onClick={() => setAvatarPage((prev) => Math.max(prev - 1, 1))}
+                className="neon-outline-btn px-4 py-2 disabled:opacity-40"
+              >
+                上一页
+              </button>
+              <p className="text-sm text-gray-400">
+                第 {avatarPage}/{totalPages} 页
+              </p>
+              <button
+                disabled={avatarPage >= totalPages}
+                onClick={() => setAvatarPage((prev) => Math.min(prev + 1, totalPages))}
+                className="neon-outline-btn px-4 py-2 disabled:opacity-40"
+              >
+                下一页
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {toast ? (
+        <div className="fixed right-4 bottom-4 z-50 px-4 py-2 rounded-xl bg-[rgba(16,185,129,0.95)] text-white shadow-lg">
+          {toast}
+        </div>
+      ) : null}
     </div>
   )
 }

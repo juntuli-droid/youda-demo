@@ -1,0 +1,35 @@
+{
+  "version": "2026.03.17",
+  "items": [
+    {
+      "personalityCodePrefix": "ACP",
+      "characterName": "先锋突击",
+      "game": "VALORANT",
+      "portrait": "/assets/personality/ace-striker.svg"
+    },
+    {
+      "personalityCodePrefix": "BCP",
+      "characterName": "战术指挥",
+      "game": "League of Legends",
+      "portrait": "/assets/personality/tactic-commander.svg"
+    },
+    {
+      "personalityCodePrefix": "SCP",
+      "characterName": "协作核心",
+      "game": "Apex Legends",
+      "portrait": "/assets/personality/sync-guardian.svg"
+    },
+    {
+      "personalityCodePrefix": "ACT",
+      "characterName": "猎场统帅",
+      "game": "Delta Force",
+      "portrait": "/assets/personality/field-hunter.svg"
+    },
+    {
+      "personalityCodePrefix": "BTR",
+      "characterName": "节奏编排",
+      "game": "Overwatch",
+      "portrait": "/assets/personality/rhythm-architect.svg"
+    }
+  ]
+}

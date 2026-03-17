@@ -10,6 +10,8 @@ type LazyGameImageProps = {
   className?: string
   width?: number
   height?: number
+  priority?: boolean
+  onFallback?: () => void
 }
 
 export default function LazyGameImage({
@@ -18,22 +20,25 @@ export default function LazyGameImage({
   alt,
   className,
   width = 1200,
-  height = 800
+  height = 800,
+  priority = false,
+  onFallback
 }: LazyGameImageProps) {
   const [currentSrc, setCurrentSrc] = useState(src)
 
   return (
     <Image
-      loading="lazy"
+      loading={priority ? undefined : "lazy"}
       src={currentSrc}
       alt={alt}
       className={className}
       width={width}
       height={height}
-      unoptimized
+      priority={priority}
       onError={() => {
         if (currentSrc !== fallbackSrc) {
           setCurrentSrc(fallbackSrc)
+          onFallback?.()
         }
       }}
     />

@@ -223,6 +223,14 @@ const CHARACTER_MAP: Record<string, string> = {
   SEW: "皮克敏"
 }
 
+export function getCharacterNameList() {
+  return [...new Set(Object.values(CHARACTER_MAP))]
+}
+
+export function getCharacterByBaseCode(baseCode: string) {
+  return CHARACTER_MAP[baseCode] || "神秘角色"
+}
+
 export function getPersonalityMeta(code: string) {
   const [baseCode, frequencyCode] = code.indexOf("-") >= 0
     ? (code.split("-") as [string, string])
@@ -243,7 +251,7 @@ export function getPersonalityMeta(code: string) {
   return {
     title: `${styleMeta.label} · ${personalityMeta.label} · ${preferenceMeta.label}`,
     description: `你在游戏里 ${styleMeta.summary}；同时 ${personalityMeta.summary}；并且 ${preferenceMeta.summary}。在搭子关系里，你属于 ${frequencyMeta.label}，${frequencyMeta.summary}。`,
-    character: CHARACTER_MAP[baseCode] || "神秘角色",
+    character: getCharacterByBaseCode(baseCode),
     tags: [
       styleMeta.label,
       personalityMeta.label,

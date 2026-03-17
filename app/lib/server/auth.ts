@@ -58,7 +58,8 @@ async function ensureUserByAuthId(authUserId: string) {
           id: found.id,
           authUserId: found.authUserId,
           nickname: `玩家${found.authUserId.slice(0, 6)}`,
-          authProvider: "supabase"
+          authProvider: "supabase",
+          avatarUrl: "/images/avatars/default.png"
         })
         return found
       }
@@ -75,7 +76,8 @@ async function ensureUserByAuthId(authUserId: string) {
         id: created.id,
         authUserId: created.authUserId,
         nickname: `玩家${created.authUserId.slice(0, 6)}`,
-        authProvider: "supabase"
+        authProvider: "supabase",
+        avatarUrl: "/images/avatars/default.png"
       })
       return created
     } catch {
@@ -93,7 +95,8 @@ async function ensureUserByAuthId(authUserId: string) {
     id: fallbackId,
     authUserId,
     nickname: `玩家${authUserId.slice(0, 6)}`,
-    authProvider: "local"
+    authProvider: "local",
+    avatarUrl: "/images/avatars/default.png"
   })
   return { id: fallbackId, authUserId }
 }

@@ -1,0 +1,21 @@
+{
+  "version": "2026.03.17",
+  "items": [
+    { "personality": "ACP", "character": "Bulbasaur", "image": "/assets/gameImages/avatar/character-01.webp" },
+    { "personality": "ACR", "character": "Venusaur", "image": "/assets/gameImages/avatar/character-02.webp" },
+    { "personality": "ACW", "character": "Charmander", "image": "/assets/gameImages/avatar/character-03.webp" },
+    { "personality": "ATP", "character": "Squirtle", "image": "/assets/gameImages/avatar/character-04.webp" },
+    { "personality": "ATR", "character": "Blastoise", "image": "/assets/gameImages/avatar/character-05.webp" },
+    { "personality": "AEP", "character": "Pikachu", "image": "/assets/gameImages/avatar/character-06.webp" },
+    { "personality": "AER", "character": "Meowth", "image": "/assets/gameImages/avatar/character-07.webp" },
+    { "personality": "BCP", "character": "Alakazam", "image": "/assets/gameImages/avatar/character-08.webp" },
+    { "personality": "BCR", "character": "Dragonite", "image": "/assets/gameImages/avatar/character-09.webp" },
+    { "personality": "BCW", "character": "Mewtwo", "image": "/assets/gameImages/avatar/character-10.webp" },
+    { "personality": "BTP", "character": "Espeon", "image": "/assets/gameImages/avatar/character-11.webp" },
+    { "personality": "BTR", "character": "Tyranitar", "image": "/assets/gameImages/avatar/character-12.webp" },
+    { "personality": "BEP", "character": "Gardevoir", "image": "/assets/gameImages/avatar/character-13.webp" },
+    { "personality": "BER", "character": "Kyogre", "image": "/assets/gameImages/avatar/character-14.webp" },
+    { "personality": "SCP", "character": "Groudon", "image": "/assets/gameImages/avatar/character-15.webp" },
+    { "personality": "STR", "character": "Zekrom", "image": "/assets/gameImages/avatar/character-16.webp" }
+  ]
+}

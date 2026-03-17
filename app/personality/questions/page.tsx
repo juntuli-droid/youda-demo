@@ -106,15 +106,23 @@ export default function PersonalityQuestionsPage() {
 
   if (!quizQuestions.length || !currentQuestion) {
     return (
-      <div className="min-h-screen bg-[#1e2124] text-white flex">
-        <aside className="w-20 bg-[#17191c] flex flex-col items-center py-6 space-y-4">
+      <div
+        className="game-shell"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(14,26,37,0.8), rgba(14,26,37,0.9)), url('/assets/gameImages/background/bg-05.webp')",
+          backgroundSize: "cover",
+          backgroundPosition: "center"
+        }}
+      >
+        <aside className="game-sidebar flex flex-col items-center py-6 space-y-4">
           <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
             S
           </div>
         </aside>
 
         <main className="flex-1 flex items-center justify-center px-6 py-10">
-          <div className="w-full max-w-2xl bg-[#2b2f33] rounded-3xl shadow-2xl p-10 text-center">
+          <div className="w-full max-w-2xl game-panel p-10 text-center">
             <p className="text-sm text-indigo-300 mb-3">游戏人格构建</p>
             <h1 className="text-2xl font-bold mb-4">题目加载失败</h1>
             <p className="text-gray-400 leading-7 mb-6">
@@ -124,7 +132,7 @@ export default function PersonalityQuestionsPage() {
 
             <button
               onClick={() => router.push("/personality")}
-              className="px-6 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:opacity-90 transition"
+              className="px-6 py-3 neon-btn font-semibold hover:opacity-90 transition"
             >
               返回上一页
             </button>
@@ -135,19 +143,27 @@ export default function PersonalityQuestionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1e2124] text-white flex">
-      <aside className="w-20 bg-[#17191c] flex flex-col items-center py-6 space-y-4">
+    <div
+      className="game-shell"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(14,26,37,0.8), rgba(14,26,37,0.9)), url('/assets/gameImages/background/bg-06.webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}
+    >
+      <aside className="game-sidebar flex flex-col items-center py-6 space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
           S
         </div>
       </aside>
 
       <main className="flex-1 flex items-center justify-center px-6 py-10">
-        <div className="w-full max-w-2xl bg-[#2b2f33] rounded-3xl shadow-2xl p-10">
+        <div className="w-full max-w-3xl game-panel p-8 md:p-10 motion-fade-in">
           <div className="flex items-start justify-between gap-4 mb-8">
             <button
               onClick={handleBack}
-              className="px-4 py-2 rounded-2xl bg-[#363b42] text-gray-300 hover:bg-[#414751] transition"
+              className="px-4 py-2 neon-outline-btn"
             >
               返回
             </button>
@@ -160,20 +176,20 @@ export default function PersonalityQuestionsPage() {
                 <p className="text-gray-400">已完成 {Math.round(progress)}%</p>
               </div>
 
-              <div className="w-full h-2 bg-[#3a3f46] rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-[rgba(58,63,70,0.7)] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300"
+                  className="h-full bg-gradient-to-r from-[#10B981] to-[#2dd4bf] transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 />
               </div>
             </div>
           </div>
 
-          <div className="mb-8">
+          <div className="mb-6">
             <p className="text-sm text-indigo-300 mb-3">
               第 {currentIndex + 1} 题
             </p>
-            <h1 className="text-3xl font-bold mb-3">{currentQuestion.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold mb-3">{currentQuestion.title}</h1>
             <p className="text-gray-400 leading-7">
               选择一个更接近你真实习惯的答案
             </p>
@@ -203,7 +219,7 @@ function AnswerButton({ label, onClick }: AnswerButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="w-full rounded-2xl bg-[#363b42] hover:bg-[#444b55] transition"
+      className="w-full game-panel hover:scale-[1.01] transition"
     >
       <div className="flex items-center justify-between px-6 py-5">
         <span className="text-lg font-medium text-white leading-none">

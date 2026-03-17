@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { apiRequest } from "../lib/client/api"
+import LazyGameImage from "../components/LazyGameImage"
+import { loadAvatarProfile, type AvatarProfile } from "../lib/avatarProfile"
 
 type MatchDraft = {
   game: string
@@ -152,9 +154,11 @@ export default function RoomPage() {
   const [input, setInput] = useState("")
   const [error, setError] = useState("")
   const [sending, setSending] = useState(false)
+  const [avatarProfile, setAvatarProfile] = useState<AvatarProfile | null>(null)
 
   useEffect(() => {
     const raw = localStorage.getItem("latestMatchDraft")
+    setAvatarProfile(loadAvatarProfile())
     if (raw) {
       const parsed = JSON.parse(raw) as MatchDraft
       setMatchDraft(parsed)
@@ -306,8 +310,16 @@ export default function RoomPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1e2124] text-white flex">
-      <aside className="w-20 bg-[#17191c] flex flex-col items-center py-6 space-y-4">
+    <div
+      className="game-shell"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(14,26,37,0.8), rgba(14,26,37,0.92)), url('/assets/gameImages/background/bg-04.webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}
+    >
+      <aside className="game-sidebar flex flex-col items-center py-6 space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
           S
         </div>
@@ -315,7 +327,7 @@ export default function RoomPage() {
 
       <main className="flex-1 p-8">
         <div className="h-full grid lg:grid-cols-[1.2fr_320px] gap-6">
-          <section className="bg-[#2b2f33] rounded-3xl p-8 shadow-2xl flex flex-col min-h-[780px]">
+          <section className="game-panel p-8 flex flex-col min-h-[780px]">
             <div className="mb-8">
               <p className="text-sm text-green-400 mb-2">匹配成功</p>
               <h1 className="text-3xl font-bold mb-3">欢迎进入语音房</h1>
@@ -335,12 +347,25 @@ export default function RoomPage() {
               {teammates.map((user) => (
                 <div
                   key={user.name}
-                  className="bg-[#363b42] rounded-2xl p-5 border border-[#434a54]"
+                  className="game-panel p-5"
                 >
                   <div className="flex items-start justify-between gap-4 mb-4">
                     <div className="flex items-center gap-4">
                       <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-lg">
-                        {user.name.slice(0, 1)}
+                        {user.name === "你" && avatarProfile?.src ? (
+                          <div className="w-14 h-14 rounded-2xl overflow-hidden border border-[rgba(126,156,224,0.35)]">
+                            <LazyGameImage
+                              src={avatarProfile.src}
+                              fallbackSrc="/assets/gameImages/avatar/character-01.webp"
+                              alt="我的头像"
+                              className="w-full h-full object-cover"
+                              width={140}
+                              height={140}
+                            />
+                          </div>
+                        ) : (
+                          user.name.slice(0, 1)
+                        )}
                       </div>
                       <div>
                         <p className="font-semibold text-lg">{user.name}</p>
@@ -375,7 +400,7 @@ export default function RoomPage() {
               ))}
             </div>
 
-            <div className="flex-1 bg-[#262a2f] rounded-3xl border border-[#3a4048] p-5 flex flex-col min-h-[320px]">
+            <div className="flex-1 game-panel p-5 flex flex-col min-h-[320px]">
               <div className="flex items-center justify-between gap-4 mb-4">
                 <div>
                   <p className="text-sm text-indigo-300 mb-1">进房前先聊一聊</p>
@@ -402,7 +427,7 @@ export default function RoomPage() {
                       className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                         message.isSelf
                           ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
-                          : "bg-[#363b42] text-white"
+                          : "bg-[rgba(54,59,66,0.9)] text-white"
                       }`}
                     >
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -438,12 +463,12 @@ export default function RoomPage() {
                     }
                   }}
                   placeholder="先聊聊分路、节奏、开麦习惯..."
-                  className="flex-1 bg-[#363b42] border border-[#4a515b] rounded-2xl px-4 py-3 text-white placeholder:text-gray-500 outline-none"
+                  className="flex-1 neon-input"
                 />
                 <button
                   onClick={handleSendMessage}
                   disabled={sending}
-                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-3 neon-btn font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {sending ? "发送中" : "发送"}
                 </button>
@@ -451,7 +476,7 @@ export default function RoomPage() {
             </div>
           </section>
 
-          <aside className="bg-[#2b2f33] rounded-3xl p-6 shadow-2xl">
+          <aside className="game-panel p-6">
             <h2 className="text-xl font-bold mb-6">房间信息</h2>
 
             <div className="space-y-4 mb-8">
@@ -463,17 +488,17 @@ export default function RoomPage() {
               <RoomInfo label="语音状态" value="已连接" />
             </div>
 
-            <button className="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:opacity-90 transition">
+            <button className="w-full py-4 neon-btn font-semibold hover:opacity-90 transition">
               进入语音通话
             </button>
 
-            <button className="w-full mt-4 py-4 rounded-2xl bg-[#363b42] text-gray-300 hover:bg-[#414751] transition">
+            <button className="w-full mt-4 py-4 neon-outline-btn">
               邀请更多队友
             </button>
 
             <button
               onClick={() => router.push("/vlog")}
-              className="w-full mt-4 py-4 rounded-2xl bg-[#363b42] text-gray-300 hover:bg-[#414751] transition"
+              className="w-full mt-4 py-4 neon-outline-btn"
             >
               记录这次游戏 Vlog
             </button>
@@ -486,7 +511,7 @@ export default function RoomPage() {
 
 function RoomInfo({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-[#363b42] rounded-2xl px-4 py-4">
+    <div className="game-panel px-4 py-4">
       <p className="text-sm text-gray-400 mb-1">{label}</p>
       <p className="font-semibold">{value}</p>
     </div>
@@ -503,7 +528,7 @@ function MiniStatusCard({
   valueClassName?: string
 }) {
   return (
-    <div className="bg-[#2b2f33] rounded-xl p-3">
+    <div className="game-panel p-3">
       <p className="text-xs text-gray-400 mb-1">{label}</p>
       <p className={`text-sm font-medium leading-6 ${valueClassName || "text-white"}`}>
         {value}

@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client"
 import { prisma } from "../prisma"
 import { getMemoryStore } from "../memoryStore"
+import { getAvatarPathByCharacter } from "../../gameCharacterAvatar"
 
 function shouldUseMemoryStore() {
   return !process.env.DATABASE_URL
@@ -41,7 +42,7 @@ export async function getProfileByUserId(userId: string) {
       return {
         id: user.id,
         nickname: user.nickname,
-        avatarUrl: null,
+        avatarUrl: user.avatarUrl || "/images/avatars/default.png",
         personality: null
       }
     }
@@ -470,6 +471,41 @@ export async function updateRoomMember(args: {
       }
       store.roomMembers.set(updated.id, updated)
       return updated
+    }
+  )
+}
+
+export async function updateUserAvatarByCharacter(args: {
+  userId: string
+  character: string
+  force?: boolean
+}) {
+  const avatarPath = getAvatarPathByCharacter(args.character)
+  return withFallback(
+    () => {
+      if (args.force) {
+        return prisma.user.updateMany({
+          where: { id: args.userId },
+          data: { avatarUrl: avatarPath }
+        })
+      }
+      return prisma.user.updateMany({
+        where: {
+          id: args.userId,
+          OR: [{ avatarUrl: null }, { avatarUrl: "/images/avatars/default.png" }]
+        },
+        data: { avatarUrl: avatarPath }
+      })
+    },
+    () => {
+      const store = getMemoryStore()
+      const user = store.users.get(args.userId)
+      if (!user) return null
+      store.users.set(args.userId, {
+        ...user,
+        avatarUrl: avatarPath
+      })
+      return { id: args.userId, avatarUrl: avatarPath }
     }
   )
 }

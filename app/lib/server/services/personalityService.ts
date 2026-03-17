@@ -5,7 +5,11 @@ import {
   getPersonalityMeta
 } from "../../personalityEngine"
 import { badRequest } from "../errors"
-import { replacePersonalityAnswers, upsertPersonalityProfile } from "../repositories/coreRepository"
+import {
+  replacePersonalityAnswers,
+  upsertPersonalityProfile,
+  updateUserAvatarByCharacter
+} from "../repositories/coreRepository"
 
 type SubmittedAnswer = {
   questionId: number
@@ -53,6 +57,11 @@ export async function submitPersonalityAnswers(args: {
     activityTag: personality.frequency,
     fullCode: personality.code,
     summaryText: meta.description,
+    character: meta.character
+  })
+
+  await updateUserAvatarByCharacter({
+    userId: args.userId,
     character: meta.character
   })
 

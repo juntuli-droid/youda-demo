@@ -54,15 +54,23 @@ export default function MatchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1e2124] text-white flex">
-      <aside className="w-20 bg-[#17191c] flex flex-col items-center py-6 space-y-4">
+    <div
+      className="game-shell"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(14,26,37,0.76), rgba(14,26,37,0.88)), url('/assets/gameImages/background/bg-02.webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}
+    >
+      <aside className="game-sidebar flex flex-col items-center py-6 space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
           S
         </div>
       </aside>
 
       <main className="flex-1 flex items-center justify-center px-6 py-10">
-        <div className="w-full max-w-3xl bg-[#2b2f33] rounded-3xl shadow-2xl p-10">
+        <div className="w-full max-w-3xl game-panel p-10">
           <div className="mb-10">
             <p className="text-sm text-indigo-300 mb-3">开始匹配</p>
             <h1 className="text-3xl font-bold mb-3">设置你的开黑条件</h1>
@@ -110,7 +118,7 @@ export default function MatchPage() {
             <button
               onClick={handleStartMatch}
               disabled={submitting}
-              className="w-full py-5 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold text-xl hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-5 neon-btn font-semibold text-xl hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? "🎮 匹配中..." : "🎮 开始匹配游戏搭子"}
             </button>
@@ -133,12 +141,12 @@ function SelectCard({
   onChange: (value: string) => void
 }) {
   return (
-    <div className="bg-[#363b42] rounded-2xl p-5">
+    <div className="game-panel p-5">
       <p className="text-sm text-gray-400 mb-3">{label}</p>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-[#2b2f33] border border-[#4a515b] rounded-xl px-4 py-3 text-white outline-none"
+        className="neon-input"
       >
         {options.map((option) => (
           <option key={option} value={option}>
