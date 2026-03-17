@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 
 type LazyGameImageProps = {
@@ -25,6 +25,10 @@ export default function LazyGameImage({
   onFallback
 }: LazyGameImageProps) {
   const [currentSrc, setCurrentSrc] = useState(src)
+
+  useEffect(() => {
+    setCurrentSrc(src)
+  }, [src])
 
   return (
     <Image

@@ -2,16 +2,9 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-
-type CareerItem = {
-  id: string
-  game: string
-  rank: string
-  duration: string
-  achievement: string
-  note: string
-  createdAt: string
-}
+import type { CareerItem } from "../lib/gameData"
+import { createAutogenBadgesFromCareer } from "../lib/autoBadgeSync"
+import { loadBadgeStore, saveBadgeStore } from "../lib/badgeStorage"
 
 const initialForm = {
   game: "英雄联盟",
@@ -52,6 +45,11 @@ export default function CareerPage() {
     const nextRecords = [nextItem, ...records]
     setRecords(nextRecords)
     localStorage.setItem("gameCareerRecords", JSON.stringify(nextRecords))
+    const badgeStore = loadBadgeStore()
+    saveBadgeStore({
+      ...badgeStore,
+      autogenBadges: createAutogenBadgesFromCareer(nextRecords)
+    })
     setForm(initialForm)
   }
 
@@ -59,6 +57,11 @@ export default function CareerPage() {
     const nextRecords = records.filter((item) => item.id !== id)
     setRecords(nextRecords)
     localStorage.setItem("gameCareerRecords", JSON.stringify(nextRecords))
+    const badgeStore = loadBadgeStore()
+    saveBadgeStore({
+      ...badgeStore,
+      autogenBadges: createAutogenBadgesFromCareer(nextRecords)
+    })
   }
 
   return (

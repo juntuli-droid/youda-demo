@@ -1,0 +1,158 @@
+{
+  "count": 27,
+  "medianWidth": 293,
+  "medianHeight": 439,
+  "medianRatio": 0.931,
+  "displayWindow": {
+    "desktop": {
+      "width": 400,
+      "height": 250
+    },
+    "tablet": {
+      "width": 344,
+      "height": 216
+    },
+    "mobile": {
+      "width": 288,
+      "height": 180
+    }
+  },
+  "note": "展示图统一采用640x640容器图，页面窗口使用16:10以保证视觉平衡；头像统一512x512注意力裁剪。",
+  "analysis": [
+    {
+      "character": "源氏",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "character": "奎托斯",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "character": "猎空",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "character": "布里吉塔",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "character": "克劳德",
+      "width": 293,
+      "height": 351
+    },
+    {
+      "character": "米法",
+      "width": 2325,
+      "height": 2721
+    },
+    {
+      "character": "林克",
+      "width": 1000,
+      "height": 865
+    },
+    {
+      "character": "2B",
+      "width": 228,
+      "height": 439
+    },
+    {
+      "character": "派蒙",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "character": "艾希",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "character": "杰洛特",
+      "width": 183,
+      "height": 275
+    },
+    {
+      "character": "吉尔",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "character": "温斯顿",
+      "width": 275,
+      "height": 183
+    },
+    {
+      "character": "阿米娅",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "character": "马力欧",
+      "width": 180,
+      "height": 280
+    },
+    {
+      "character": "里昂",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "character": "蒂法",
+      "width": 122,
+      "height": 400
+    },
+    {
+      "character": "艾洛伊",
+      "width": 217,
+      "height": 233
+    },
+    {
+      "character": "卢西奥",
+      "width": 162,
+      "height": 300
+    },
+    {
+      "character": "芭芭拉",
+      "width": 220,
+      "height": 438
+    },
+    {
+      "character": "旅人",
+      "width": 220,
+      "height": 230
+    },
+    {
+      "character": "天使",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "character": "吉安娜",
+      "width": 194,
+      "height": 259
+    },
+    {
+      "character": "塞尔达",
+      "width": 790,
+      "height": 1058
+    },
+    {
+      "character": "卡比",
+      "width": 195,
+      "height": 258
+    },
+    {
+      "character": "西施惠",
+      "width": 233,
+      "height": 425
+    },
+    {
+      "character": "皮克敏",
+      "width": 168,
+      "height": 300
+    }
+  ]
+}

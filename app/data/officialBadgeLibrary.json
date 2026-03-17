@@ -1,0 +1,44 @@
+[
+  {
+    "id": "off-elden-all",
+    "name": "艾尔登法环-全收集",
+    "description": "完成全收集与全追忆挑战",
+    "iconUrl": "/budget/成就1.png",
+    "blurDataURL": "data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAAAfQ//73v/+BiOh/AAA="
+  },
+  {
+    "id": "off-yakuza-all",
+    "name": "人中之龙-全收集",
+    "description": "达成主支线与收集图鉴完成",
+    "iconUrl": "/budget/成就2.png",
+    "blurDataURL": "data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAAAfQ//73v/+BiOh/AAA="
+  },
+  {
+    "id": "off-genshin-abyss",
+    "name": "原神-深渊12层满星",
+    "description": "单期深渊 12 层满星通关",
+    "iconUrl": "/budget/成就3.png",
+    "blurDataURL": "data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAAAfQ//73v/+BiOh/AAA="
+  },
+  {
+    "id": "off-lol-diamond",
+    "name": "英雄联盟-钻石",
+    "description": "排位段位达到钻石",
+    "iconUrl": "/budget/成就4.png",
+    "blurDataURL": "data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAAAfQ//73v/+BiOh/AAA="
+  },
+  {
+    "id": "off-valorant-radiant",
+    "name": "VALORANT-辐射",
+    "description": "竞技排位达到辐射",
+    "iconUrl": "/budget/成就5.png",
+    "blurDataURL": "data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAAAfQ//73v/+BiOh/AAA="
+  },
+  {
+    "id": "off-overwatch-gm",
+    "name": "守望先锋-宗师",
+    "description": "竞技分段达到宗师",
+    "iconUrl": "/budget/成就6.png",
+    "blurDataURL": "data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAAAfQ//73v/+BiOh/AAA="
+  }
+]

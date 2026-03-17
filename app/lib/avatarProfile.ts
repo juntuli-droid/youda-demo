@@ -8,6 +8,9 @@ export type AvatarPreset = {
 
 export type AvatarProfile = {
   src: string
+  personalityCode?: string
+  character?: string
+  customized?: boolean
 }
 
 const storageKey = "avatarProfileConfig"
@@ -22,7 +25,8 @@ export const avatarPresets: AvatarPreset[] = [
 
 export function getDefaultAvatarProfile(): AvatarProfile {
   return {
-    src: "/assets/gameImages/avatar/character-01.webp"
+    src: "/images/avatars/default.png",
+    customized: false
   }
 }
 
@@ -33,7 +37,12 @@ export function loadAvatarProfile(): AvatarProfile {
   try {
     const parsed = JSON.parse(raw) as AvatarProfile
     if (!parsed.src) return getDefaultAvatarProfile()
-    return parsed
+    return {
+      src: parsed.src,
+      personalityCode: parsed.personalityCode,
+      character: parsed.character,
+      customized: Boolean(parsed.customized)
+    }
   } catch {
     return getDefaultAvatarProfile()
   }
@@ -42,4 +51,21 @@ export function loadAvatarProfile(): AvatarProfile {
 export function saveAvatarProfile(profile: AvatarProfile) {
   if (typeof window === "undefined") return
   localStorage.setItem(storageKey, JSON.stringify(profile))
+}
+
+export function resolveAvatarForCurrentRole(args: {
+  profile: AvatarProfile
+  personalityCode: string
+  character: string
+  mappedAvatar: string
+}) {
+  const profile = args.profile
+  if (
+    profile.customized &&
+    profile.personalityCode === args.personalityCode &&
+    profile.src
+  ) {
+    return profile.src
+  }
+  return args.mappedAvatar
 }

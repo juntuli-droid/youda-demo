@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import {
   calculatePersonality,
-  getFrequencyLabel,
   getPersonalityLabel,
   getPersonalityMeta,
   getPreferenceLabel,
@@ -12,10 +11,20 @@ import {
 } from "../lib/personalityEngine"
 import { withCatalogAsset } from "../lib/personalityAssets"
 import LazyGameImage from "../components/LazyGameImage"
+import BadgeRail from "../components/BadgeRail"
 import { loadAssetCatalog } from "../lib/assetCatalogClient"
-import { loadAvatarProfile, saveAvatarProfile } from "../lib/avatarProfile"
-import { loadAvatarMap, pickAvatarByPersonality } from "../lib/avatarMapClient"
+import { saveAvatarProfile } from "../lib/avatarProfile"
 import { loadAvatarGallery, type AvatarGalleryConfig } from "../lib/avatarGalleryClient"
+import { getAvatarPathByCharacter, getAvatarFileByCharacter } from "../lib/gameCharacterAvatar"
+import { resolvePersonalityAvatarFromScores } from "../lib/personalityAvatarResolver"
+import { createAutogenBadgesFromCareer } from "../lib/autoBadgeSync"
+import {
+  loadBadgeStore,
+  removeBadgeById,
+  saveBadgeStore,
+  toDisplayBadges
+} from "../lib/badgeStorage"
+import type { BadgeItem } from "../lib/badgeTypes"
 
 type ProfileResult = ReturnType<typeof calculatePersonality> &
   ReturnType<typeof getPersonalityMeta> & {
@@ -58,6 +67,9 @@ export default function ProfilePage() {
   const [avatarPage, setAvatarPage] = useState(1)
   const [avatarKeyword, setAvatarKeyword] = useState("")
   const [toast, setToast] = useState("")
+  const [badgeList, setBadgeList] = useState<BadgeItem[]>([])
+  const [canManageBadge, setCanManageBadge] = useState(false)
+  const [editingBadge, setEditingBadge] = useState<BadgeItem | null>(null)
 
   useEffect(() => {
     const raw = localStorage.getItem("personalityScores")
@@ -72,9 +84,16 @@ export default function ProfilePage() {
 
       if (meta.sessionId === currentSessionId) {
         const scores = JSON.parse(raw) as Record<string, number>
-        const personality = calculatePersonality(scores)
-        const metaInfo = getPersonalityMeta(personality.code)
-        const frequencyLabel = getFrequencyLabel(personality.frequency)
+        const resolved = resolvePersonalityAvatarFromScores(scores)
+        const { personality, meta: metaInfo, frequencyLabel, character, avatarPath } = resolved
+        const hasAvatarFile = Boolean(getAvatarFileByCharacter(character))
+        console.info("[profile-avatar] resolved", {
+          personalityCode: personality.code,
+          baseCode: personality.baseCode,
+          character,
+          avatarPath,
+          hasAvatarFile
+        })
 
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setResult({
@@ -88,12 +107,12 @@ export default function ProfilePage() {
             setCatalogAsset(catalog.assets[prefix])
           }
         })
-        loadAvatarMap().then((map) => {
-          const selected = pickAvatarByPersonality(map, personality.code)
-          const localProfile = loadAvatarProfile()
-          const src = localProfile.src || selected?.image || "/assets/gameImages/avatar/character-01.webp"
-          setAvatarSrc(src)
-          saveAvatarProfile({ src })
+        setAvatarSrc(avatarPath)
+        saveAvatarProfile({
+          src: avatarPath,
+          personalityCode: personality.code,
+          character,
+          customized: false
         })
         loadAvatarGallery().then((gallery) => setAvatarGallery(gallery))
       } else {
@@ -106,22 +125,26 @@ export default function ProfilePage() {
     const rawCareer = localStorage.getItem("gameCareerRecords")
     const rawVlog = localStorage.getItem("gameVlogRecords")
 
-    if (rawCareer) {
-      setCareerList(JSON.parse(rawCareer))
-    }
+    const careerRecords = rawCareer ? (JSON.parse(rawCareer) as CareerItem[]) : []
+    setCareerList(careerRecords)
 
     if (rawVlog) {
       setVlogList(JSON.parse(rawVlog))
     }
 
+    const badgeStore = loadBadgeStore()
+    const nextBadgeStore = {
+      ...badgeStore,
+      autogenBadges: createAutogenBadgesFromCareer(careerRecords)
+    }
+    saveBadgeStore(nextBadgeStore)
+    setBadgeList(toDisplayBadges(nextBadgeStore))
+    setCanManageBadge(Boolean(localStorage.getItem("authAccessToken")))
+
     if (!raw || !metaRaw || !currentSessionId) {
-      loadAvatarMap().then((map) => {
-        const selected = pickAvatarByPersonality(map)
-        const localProfile = loadAvatarProfile()
-        const src = localProfile.src || selected?.image || "/assets/gameImages/avatar/character-01.webp"
-        setAvatarSrc(src)
-        saveAvatarProfile({ src })
-      })
+      const src = "/images/avatars/default.png"
+      setAvatarSrc(src)
+      saveAvatarProfile({ src, customized: false })
       loadAvatarGallery().then((gallery) => setAvatarGallery(gallery))
     }
   }, [])
@@ -186,6 +209,13 @@ export default function ProfilePage() {
     avatarPage * pageSize
   )
   const totalPages = Math.max(Math.ceil(filteredAvatarItems.length / pageSize), 1)
+  const handleOpenAddBadge = () => {
+    router.push("/profile/add-badge")
+  }
+  const handleBadgeEdit = (badge: BadgeItem) => {
+    if (!canManageBadge) return
+    setEditingBadge(badge)
+  }
 
   return (
     <div className="game-shell">
@@ -211,14 +241,15 @@ export default function ProfilePage() {
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
               <div className="flex-1">
                 <div className="flex items-center gap-5 mb-6">
-                  <div className="w-20 h-20 rounded-3xl overflow-hidden border border-[rgba(126,156,224,0.35)] shadow-[0_6px_16px_rgba(0,0,0,0.24)] hover:scale-110 transition-transform">
+                  <div className="relative w-20 h-20 rounded-3xl overflow-hidden border border-[rgba(126,156,224,0.35)] shadow-[0_6px_16px_rgba(0,0,0,0.24)] hover:scale-110 transition-transform">
                     <LazyGameImage
-                      src={avatarSrc || visual.profileAvatar}
-                      fallbackSrc="/assets/gameImages/avatar/character-01.webp"
+                      src={avatarSrc || "/images/avatars/default.png"}
+                      fallbackSrc="/images/avatars/default.png"
                       alt={`${displayCharacter} 头像`}
-                      className="w-20 h-20 object-cover"
+                      className="w-20 h-20 object-cover object-[50%_22%]"
                       width={180}
                       height={180}
+                      priority
                     />
                   </div>
 
@@ -242,9 +273,12 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <p className="text-gray-300 leading-8 text-base md:text-lg max-w-3xl">
-                  {result.description}
-                </p>
+                <BadgeRail
+                  badges={badgeList}
+                  canManage={canManageBadge}
+                  onAdd={handleOpenAddBadge}
+                  onEdit={handleBadgeEdit}
+                />
               </div>
 
               <div className="lg:w-[320px] grid grid-cols-2 gap-3">
@@ -444,9 +478,15 @@ export default function ProfilePage() {
                 <button
                   key={item.id}
                   onClick={() => {
-                    setAvatarSrc(item.image)
-                    saveAvatarProfile({ src: item.image })
-                    setToast(`已切换为 ${item.character}`)
+                    const lockedAvatar = getAvatarPathByCharacter(displayCharacter)
+                    setAvatarSrc(lockedAvatar)
+                    saveAvatarProfile({
+                      src: lockedAvatar,
+                      personalityCode: result.code,
+                      character: displayCharacter,
+                      customized: false
+                    })
+                    setToast(`已锁定人格头像：${displayCharacter}`)
                     setAvatarModalOpen(false)
                     setTimeout(() => setToast(""), 1600)
                   }}
@@ -456,7 +496,7 @@ export default function ProfilePage() {
                     src={item.image}
                     fallbackSrc="/assets/gameImages/avatar/character-01.webp"
                     alt={item.character}
-                    className="w-full h-24 object-cover"
+                    className="w-full h-24 object-cover object-[50%_24%]"
                     width={220}
                     height={220}
                   />
@@ -480,6 +520,43 @@ export default function ProfilePage() {
                 className="neon-outline-btn px-4 py-2 disabled:opacity-40"
               >
                 下一页
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {editingBadge ? (
+        <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-[2px] flex items-center justify-center p-4">
+          <div className="w-full max-w-md game-panel p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">编辑标签/奖牌</h3>
+              <button onClick={() => setEditingBadge(null)} className="neon-outline-btn px-3 py-1.5 text-sm">
+                关闭
+              </button>
+            </div>
+            <p className="text-sm text-gray-300">{editingBadge.name}</p>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => {
+                  setEditingBadge(null)
+                  router.push(`/profile/add-badge?edit=${editingBadge.id}`)
+                }}
+                className="neon-outline-btn px-3 py-2 text-sm"
+              >
+                替换
+              </button>
+              <button
+                onClick={() => {
+                  const next = removeBadgeById(editingBadge.id)
+                  setBadgeList(toDisplayBadges(next))
+                  setToast("已删除")
+                  setEditingBadge(null)
+                  setTimeout(() => setToast(""), 1600)
+                }}
+                className="px-3 py-2 text-sm rounded-lg border border-red-400/40 bg-red-500/10 text-red-200"
+              >
+                删除
               </button>
             </div>
           </div>

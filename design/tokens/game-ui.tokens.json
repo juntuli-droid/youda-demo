@@ -1,0 +1,43 @@
+{
+  "theme": {
+    "dark": {
+      "bg.0": "#0e1a25",
+      "bg.1": "#152634",
+      "panel": "rgba(23,30,52,0.88)",
+      "line": "rgba(117,138,178,0.24)",
+      "text.main": "#ecf3ff",
+      "text.sub": "#93a1bf",
+      "brand.1": "#10b981",
+      "brand.2": "#2dd4bf"
+    },
+    "light": {
+      "bg.0": "#f3f6fb",
+      "bg.1": "#ffffff",
+      "panel": "rgba(255,255,255,0.92)",
+      "line": "rgba(99,116,151,0.22)",
+      "text.main": "#152634",
+      "text.sub": "#4f607f",
+      "brand.1": "#0ea772",
+      "brand.2": "#14c7b1"
+    }
+  },
+  "radius": {
+    "sm": 8,
+    "md": 12,
+    "lg": 16
+  },
+  "spacing": [8, 16, 24, 32, 40, 48],
+  "breakpoints": {
+    "sm": 640,
+    "lg": 1024,
+    "xl": 1280
+  },
+  "motion": {
+    "fadeIn.durationMs": 360,
+    "hover.durationMs": 180,
+    "curve.standard": "ease"
+  },
+  "rtl": {
+    "supported": true
+  }
+}

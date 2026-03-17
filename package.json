@@ -11,6 +11,7 @@
     "test": "vitest run",
     "assets:crawl": "node scripts/asset-crawler.mjs",
     "avatars:fetch": "node scripts/fetch-game-character-avatars.mjs",
+    "chars:sync": "node scripts/sync-game-chars-from-source.mjs",
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy"

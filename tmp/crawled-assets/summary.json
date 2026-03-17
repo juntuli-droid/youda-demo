@@ -1,0 +1,59 @@
+[
+  {
+    "name": "game-character-set",
+    "source": "https://raw.githubusercontent.com/PokeAPI/sprites/master/",
+    "count": 16,
+    "manifest": "/Users/lijuntu/syncup-demo/youda-demo/tmp/crawled-assets/game-character-set.json",
+    "downloaded": 6,
+    "outputs": [
+      {
+        "source": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/4.png",
+        "files": [
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-03.webp",
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-03.png",
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-03.jpg"
+        ]
+      },
+      {
+        "source": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/7.png",
+        "files": [
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-04.webp",
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-04.png",
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-04.jpg"
+        ]
+      },
+      {
+        "source": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/9.png",
+        "files": [
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-05.webp",
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-05.png",
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-05.jpg"
+        ]
+      },
+      {
+        "source": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/25.png",
+        "files": [
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-06.webp",
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-06.png",
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-06.jpg"
+        ]
+      },
+      {
+        "source": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/52.png",
+        "files": [
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-07.webp",
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-07.png",
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-07.jpg"
+        ]
+      },
+      {
+        "source": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/65.png",
+        "files": [
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-08.webp",
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-08.png",
+          "/Users/lijuntu/syncup-demo/youda-demo/public/assets/gameImages/avatar/character-08.jpg"
+        ]
+      }
+    ]
+  }
+]

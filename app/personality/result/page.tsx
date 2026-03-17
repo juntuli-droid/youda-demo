@@ -4,17 +4,17 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import {
   calculatePersonality,
-  getFrequencyLabel,
-  getPersonalityMeta,
-  getCharacterByBaseCode
+  getPersonalityMeta
 } from "../../lib/personalityEngine"
 import ResultPage from "../../components/ResultPage"
 import { saveAvatarProfile } from "../../lib/avatarProfile"
-import { getAvatarPathByCharacter } from "../../lib/gameCharacterAvatar"
+import { getAvatarCacheKey } from "../../lib/avatarImageLoader"
+import { resolvePersonalityAvatarFromScores } from "../../lib/personalityAvatarResolver"
 
 type ResultData = ReturnType<typeof calculatePersonality> &
   ReturnType<typeof getPersonalityMeta> & {
     frequencyLabel: string
+    gamePersonality?: string
   }
 
 export default function PersonalityResultPage() {
@@ -29,27 +29,42 @@ export default function PersonalityResultPage() {
 
     if (!raw || !metaRaw || !currentSessionId) return
 
-    const meta = JSON.parse(metaRaw) as {
+    const sessionMeta = JSON.parse(metaRaw) as {
       sessionId: string
       updatedAt: string
     }
 
-    if (meta.sessionId !== currentSessionId) return
+    if (sessionMeta.sessionId !== currentSessionId) return
 
     const scores = JSON.parse(raw) as Record<string, number>
-    const personality = calculatePersonality(scores)
-    const metaInfo = getPersonalityMeta(personality.code)
-    const frequencyLabel = getFrequencyLabel(personality.frequency)
-    const character = getCharacterByBaseCode(personality.baseCode)
+    const resolved = resolvePersonalityAvatarFromScores(scores)
+    const { personality, meta: metaInfo, character, avatarPath, frequencyLabel } = resolved
+    console.info("[result-avatar] resolved", {
+      code: personality.code,
+      baseCode: personality.baseCode,
+      character,
+      avatarPath
+    })
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setResult({
       ...personality,
       ...metaInfo,
       frequencyLabel,
-      character
+      character,
+      gamePersonality: character
     })
-    saveAvatarProfile({ src: getAvatarPathByCharacter(character) })
+    saveAvatarProfile({
+      src: avatarPath,
+      personalityCode: personality.code,
+      character,
+      customized: false
+    })
+    const preload = new Image()
+    preload.onload = () => {
+      sessionStorage.setItem(getAvatarCacheKey(avatarPath), avatarPath)
+    }
+    preload.src = avatarPath
   }, [])
 
   if (!result) {
