@@ -1,0 +1,32 @@
+{
+  "version": "2026.03.17",
+  "updatedAt": "2026-03-17T00:00:00.000Z",
+  "licensePolicy": "project-original-only",
+  "assets": {
+    "ACP": {
+      "portrait": "/assets/personality/ace-striker.svg",
+      "avatar": "/assets/personality/default-avatar.svg",
+      "banner": "/assets/personality/default-banner.svg"
+    },
+    "BCP": {
+      "portrait": "/assets/personality/tactic-commander.svg",
+      "avatar": "/assets/personality/default-avatar.svg",
+      "banner": "/assets/personality/default-banner.svg"
+    },
+    "SCP": {
+      "portrait": "/assets/personality/sync-guardian.svg",
+      "avatar": "/assets/personality/default-avatar.svg",
+      "banner": "/assets/personality/default-banner.svg"
+    },
+    "ACT": {
+      "portrait": "/assets/personality/field-hunter.svg",
+      "avatar": "/assets/personality/default-avatar.svg",
+      "banner": "/assets/personality/default-banner.svg"
+    },
+    "BTR": {
+      "portrait": "/assets/personality/rhythm-architect.svg",
+      "avatar": "/assets/personality/default-avatar.svg",
+      "banner": "/assets/personality/default-banner.svg"
+    }
+  }
+}

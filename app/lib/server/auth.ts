@@ -3,6 +3,7 @@ import { NextRequest } from "next/server"
 import { prisma } from "./prisma"
 import { unauthorized } from "./errors"
 import { verifyAuthToken } from "./security/token"
+import { getMemoryStore } from "./memoryStore"
 
 type AuthUser = {
   id: string
@@ -36,21 +37,65 @@ async function verifySupabaseToken(token: string) {
 }
 
 async function ensureUserByAuthId(authUserId: string) {
-  const found = await prisma.user.findUnique({
-    where: { authUserId },
-    select: { id: true, authUserId: true }
-  })
+  const useMemoryOnly = !process.env.DATABASE_URL
+  const memoryStore = getMemoryStore()
+  const memoryUser = [...memoryStore.users.values()].find(
+    (item) => item.authUserId === authUserId
+  )
+  if (memoryUser && useMemoryOnly) {
+    return { id: memoryUser.id, authUserId: memoryUser.authUserId }
+  }
 
-  if (found) return found
+  if (!useMemoryOnly) {
+    try {
+      const found = await prisma.user.findUnique({
+        where: { authUserId },
+        select: { id: true, authUserId: true }
+      })
 
-  return prisma.user.create({
-    data: {
-      authUserId,
-      nickname: `玩家${authUserId.slice(0, 6)}`,
-      authProvider: "supabase"
-    },
-    select: { id: true, authUserId: true }
+      if (found) {
+        memoryStore.users.set(found.id, {
+          id: found.id,
+          authUserId: found.authUserId,
+          nickname: `玩家${found.authUserId.slice(0, 6)}`,
+          authProvider: "supabase"
+        })
+        return found
+      }
+
+      const created = await prisma.user.create({
+        data: {
+          authUserId,
+          nickname: `玩家${authUserId.slice(0, 6)}`,
+          authProvider: "supabase"
+        },
+        select: { id: true, authUserId: true }
+      })
+      memoryStore.users.set(created.id, {
+        id: created.id,
+        authUserId: created.authUserId,
+        nickname: `玩家${created.authUserId.slice(0, 6)}`,
+        authProvider: "supabase"
+      })
+      return created
+    } catch {
+    }
+  }
+
+  if (memoryUser) {
+    return { id: memoryUser.id, authUserId: memoryUser.authUserId }
+  }
+
+  const fallbackId = authUserId.startsWith("dev_user_")
+    ? authUserId
+    : crypto.randomUUID()
+  memoryStore.users.set(fallbackId, {
+    id: fallbackId,
+    authUserId,
+    nickname: `玩家${authUserId.slice(0, 6)}`,
+    authProvider: "local"
   })
+  return { id: fallbackId, authUserId }
 }
 
 export async function requireUser(request: NextRequest): Promise<AuthUser> {

@@ -21,8 +21,8 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen flex bg-[#1e2124] text-white">
-      <aside className="w-20 bg-[#17191c] flex flex-col items-center py-6 space-y-4">
+    <div className="game-shell">
+      <aside className="game-sidebar flex flex-col items-center py-6 space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
           有搭
         </div>
@@ -31,7 +31,7 @@ export default function HomePage() {
       </aside>
 
       <main className="flex-1 flex items-center justify-center px-6">
-        <div className="w-full max-w-md bg-[#2b2f33] rounded-3xl shadow-2xl p-10">
+        <div className="w-full max-w-md game-panel p-10 motion-fade-in">
           <div className="mb-10">
             <p className="text-sm text-indigo-300 mb-3">有搭</p>
             <h1 className="text-4xl font-bold mb-3">找到你的游戏搭子</h1>
@@ -42,7 +42,7 @@ export default function HomePage() {
 
           <div className="space-y-4">
             <button
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold text-lg hover:opacity-90 transition"
+              className="w-full py-4 font-semibold text-lg neon-btn"
               onClick={handleStartDemo}
             >
               先体验 Demo
@@ -50,14 +50,14 @@ export default function HomePage() {
 
             <button
               onClick={handlePhoneLogin}
-              className="w-full py-4 rounded-2xl bg-[#363b42] text-gray-300 hover:bg-[#414751] transition"
+              className="w-full py-4 neon-outline-btn"
             >
               手机号登录
             </button>
 
             <button
               onClick={handleWechatLogin}
-              className="w-full py-4 rounded-2xl bg-[#363b42] text-gray-300 hover:bg-[#414751] transition"
+              className="w-full py-4 neon-outline-btn"
             >
               微信登录
             </button>

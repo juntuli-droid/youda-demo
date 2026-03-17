@@ -10,6 +10,11 @@ import {
   getPreferenceLabel,
   getStyleLabel
 } from "../../lib/personalityEngine"
+import {
+  withCatalogAsset
+} from "../../lib/personalityAssets"
+import LazyGameImage from "../../components/LazyGameImage"
+import { loadAssetCatalog } from "../../lib/assetCatalogClient"
 
 type ResultData = ReturnType<typeof calculatePersonality> &
   ReturnType<typeof getPersonalityMeta> & {
@@ -24,6 +29,11 @@ type ResultMiniCardProps = {
 export default function PersonalityResultPage() {
   const router = useRouter()
   const [result, setResult] = useState<ResultData | null>(null)
+  const [catalogAsset, setCatalogAsset] = useState<{
+    portrait: string
+    avatar: string
+    banner: string
+  } | null>(null)
 
   useEffect(() => {
     const raw = localStorage.getItem("personalityScores")
@@ -50,19 +60,26 @@ export default function PersonalityResultPage() {
       ...metaInfo,
       frequencyLabel
     })
+
+    const prefix = personality.code.split("-")[0]
+    loadAssetCatalog().then((catalog) => {
+      if (catalog?.assets[prefix]) {
+        setCatalogAsset(catalog.assets[prefix])
+      }
+    })
   }, [])
 
   if (!result) {
     return (
-      <div className="min-h-screen bg-[#1e2124] text-white flex">
-        <aside className="w-20 bg-[#17191c] flex flex-col items-center py-6">
+      <div className="game-shell">
+        <aside className="game-sidebar flex flex-col items-center py-6">
           <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
             S
           </div>
         </aside>
 
         <main className="flex-1 flex items-center justify-center px-6 py-10">
-          <div className="w-full max-w-md bg-[#2b2f33] rounded-3xl shadow-2xl p-8 text-center">
+          <div className="w-full max-w-md game-panel p-8 text-center motion-fade-in">
             <p className="text-sm text-indigo-300 mb-3">人格结果</p>
             <h1 className="text-2xl font-bold mb-4">还没有本轮测试结果</h1>
             <p className="text-gray-400 leading-7 mb-8">
@@ -71,7 +88,7 @@ export default function PersonalityResultPage() {
 
             <button
               onClick={() => router.push("/personality")}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold text-lg hover:opacity-90 transition"
+              className="w-full py-4 font-semibold text-lg neon-btn"
             >
               去做测试
             </button>
@@ -80,17 +97,18 @@ export default function PersonalityResultPage() {
       </div>
     )
   }
+  const visual = withCatalogAsset(result.code, catalogAsset || undefined)
 
   return (
-    <div className="min-h-screen bg-[#1e2124] text-white flex">
-      <aside className="w-20 bg-[#17191c] flex flex-col items-center py-6 space-y-4">
+    <div className="game-shell">
+      <aside className="game-sidebar flex flex-col items-center py-6 space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
           S
         </div>
       </aside>
 
       <main className="flex-1 flex items-center justify-center px-6 py-10">
-        <div className="w-full max-w-3xl bg-[#2b2f33] rounded-3xl shadow-2xl p-8 md:p-10">
+        <div className="w-full max-w-4xl game-panel p-8 md:p-10 motion-fade-in">
           <div className="mb-8">
             <p className="text-sm text-indigo-300 mb-3">人格结果</p>
 
@@ -105,6 +123,15 @@ export default function PersonalityResultPage() {
             <p className="text-gray-400 text-base leading-8">
               {result.description}
             </p>
+          </div>
+
+          <div className="mb-6 rounded-3xl border border-[rgba(123,153,214,0.22)] overflow-hidden">
+            <LazyGameImage
+              src={visual.portrait}
+              fallbackSrc="/assets/personality/default-portrait.svg"
+              alt={`${visual.title} 角色形象`}
+              className="w-full h-[280px] object-cover"
+            />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -126,7 +153,7 @@ export default function PersonalityResultPage() {
             />
           </div>
 
-          <div className="bg-[#363b42] rounded-2xl p-6 mb-8">
+          <div className="game-panel p-6 mb-8">
             <p className="text-sm text-gray-400 mb-3">人格记忆点</p>
             <p className="text-2xl font-semibold mb-3">{result.character}</p>
             <p className="text-sm text-gray-400 leading-8">
@@ -136,7 +163,7 @@ export default function PersonalityResultPage() {
 
           <button
             onClick={() => router.push("/profile")}
-            className="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold text-xl hover:opacity-90 transition"
+            className="w-full py-4 font-semibold text-xl neon-btn"
           >
             进入我的游戏主页
           </button>
@@ -148,9 +175,9 @@ export default function PersonalityResultPage() {
 
 function ResultMiniCard({ label, value }: ResultMiniCardProps) {
   return (
-    <div className="bg-[#363b42] rounded-2xl p-5 min-h-[124px] flex flex-col justify-between">
+    <div className="game-panel p-5 min-h-[124px] flex flex-col justify-between">
       <div>
-        <p className="text-sm text-gray-400 mb-3">{label}</p>
+        <p className="hud-label mb-3">{label}</p>
         <p className="text-[17px] leading-8 font-semibold text-white">
           {value}
         </p>

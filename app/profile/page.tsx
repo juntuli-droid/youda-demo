@@ -10,6 +10,9 @@ import {
   getPreferenceLabel,
   getStyleLabel
 } from "../lib/personalityEngine"
+import { withCatalogAsset } from "../lib/personalityAssets"
+import LazyGameImage from "../components/LazyGameImage"
+import { loadAssetCatalog } from "../lib/assetCatalogClient"
 
 type ProfileResult = ReturnType<typeof calculatePersonality> &
   ReturnType<typeof getPersonalityMeta> & {
@@ -41,6 +44,11 @@ export default function ProfilePage() {
   const [result, setResult] = useState<ProfileResult | null>(null)
   const [careerList, setCareerList] = useState<CareerItem[]>([])
   const [vlogList, setVlogList] = useState<VlogItem[]>([])
+  const [catalogAsset, setCatalogAsset] = useState<{
+    portrait: string
+    avatar: string
+    banner: string
+  } | null>(null)
 
   useEffect(() => {
     const raw = localStorage.getItem("personalityScores")
@@ -64,6 +72,12 @@ export default function ProfilePage() {
           ...personality,
           ...metaInfo,
           frequencyLabel
+        })
+        const prefix = personality.code.split("-")[0]
+        loadAssetCatalog().then((catalog) => {
+          if (catalog?.assets[prefix]) {
+            setCatalogAsset(catalog.assets[prefix])
+          }
         })
       } else {
         setResult(null)
@@ -104,15 +118,15 @@ export default function ProfilePage() {
 
   if (!result) {
     return (
-      <div className="min-h-screen bg-[#1e2124] text-white flex">
-        <aside className="w-20 bg-[#17191c] flex flex-col items-center py-6">
+      <div className="game-shell">
+        <aside className="game-sidebar flex flex-col items-center py-6">
           <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
             S
           </div>
         </aside>
 
         <main className="flex-1 flex items-center justify-center px-6 py-10">
-          <div className="w-full max-w-md bg-[#2b2f33] rounded-3xl shadow-2xl p-8 text-center">
+          <div className="w-full max-w-md game-panel p-8 text-center motion-fade-in">
             <p className="text-sm text-indigo-300 mb-3">我的主页</p>
             <h1 className="text-2xl font-bold mb-4">还没有本轮人格信息</h1>
             <p className="text-gray-400 leading-7 mb-8">
@@ -120,7 +134,7 @@ export default function ProfilePage() {
             </p>
             <button
               onClick={() => router.push("/personality")}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold text-lg hover:opacity-90 transition"
+              className="w-full py-4 font-semibold text-lg neon-btn"
             >
               去做测试
             </button>
@@ -131,11 +145,11 @@ export default function ProfilePage() {
   }
 
   const displayCharacter = result.character || "未命名人格"
-  const displayInitial = displayCharacter.slice(0, 1)
+  const visual = withCatalogAsset(result.code, catalogAsset || undefined)
 
   return (
-    <div className="min-h-screen bg-[#1e2124] text-white flex">
-      <aside className="w-20 bg-[#17191c] flex flex-col items-center py-6 space-y-4">
+    <div className="game-shell">
+      <aside className="game-sidebar flex flex-col items-center py-6 space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
           S
         </div>
@@ -143,15 +157,26 @@ export default function ProfilePage() {
 
       <main className="flex-1 px-6 py-10">
         <div className="max-w-6xl mx-auto space-y-6">
-          <div className="bg-[#2b2f33] rounded-3xl shadow-2xl p-8 md:p-10">
+          <div className="game-panel p-8 md:p-10 motion-fade-in">
             <p className="text-sm text-indigo-300 mb-3">我的游戏主页</p>
+            <div className="mb-6 rounded-3xl border border-[rgba(123,153,214,0.22)] overflow-hidden">
+              <LazyGameImage
+                src={visual.banner}
+                fallbackSrc="/assets/personality/default-banner.svg"
+                alt={`${displayCharacter} 主题横幅`}
+                className="w-full h-[160px] object-cover"
+              />
+            </div>
 
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
               <div className="flex-1">
                 <div className="flex items-center gap-5 mb-6">
-                  <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-3xl font-bold shadow-lg">
-                    {displayInitial}
-                  </div>
+                  <LazyGameImage
+                    src={visual.profileAvatar}
+                    fallbackSrc="/assets/personality/default-avatar.svg"
+                    alt={`${displayCharacter} 头像`}
+                    className="w-20 h-20 rounded-3xl border border-[rgba(126,156,224,0.35)] object-cover"
+                  />
 
                   <div>
                     <h1 className="text-[30px] md:text-[36px] font-bold leading-tight">
@@ -185,7 +210,7 @@ export default function ProfilePage() {
 
           <div className="grid xl:grid-cols-[1.4fr_0.9fr] gap-6">
             <div className="space-y-6">
-              <div className="bg-[#2b2f33] rounded-3xl shadow-2xl p-8">
+              <div className="game-panel p-8">
                 <div className="flex items-center justify-between gap-4 mb-6">
                   <div>
                     <p className="text-sm text-indigo-300 mb-2">开始行动</p>
@@ -196,7 +221,7 @@ export default function ProfilePage() {
                 <div className="space-y-4">
                   <button
                     onClick={() => router.push("/match")}
-                    className="w-full py-5 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold text-xl hover:opacity-90 transition"
+                    className="w-full py-5 font-semibold text-xl neon-btn"
                   >
                     🎮 进入匹配我的游戏搭子
                   </button>
@@ -204,14 +229,14 @@ export default function ProfilePage() {
                   <div className="grid md:grid-cols-2 gap-4">
                     <button
                       onClick={() => router.push("/career")}
-                      className="w-full py-4 rounded-2xl bg-[#363b42] border border-[#4a515b] font-semibold text-lg hover:bg-[#3c4148] transition"
+                      className="w-full py-4 font-semibold text-lg neon-outline-btn"
                     >
                       🏆 进入我的游戏生涯
                     </button>
 
                     <button
                       onClick={() => router.push("/vlog")}
-                      className="w-full py-4 rounded-2xl bg-[#363b42] border border-[#4a515b] font-semibold text-lg hover:bg-[#3c4148] transition"
+                      className="w-full py-4 font-semibold text-lg neon-outline-btn"
                     >
                       📹 查看我的游戏 Vlog
                     </button>
@@ -219,7 +244,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="bg-[#2b2f33] rounded-3xl shadow-2xl p-8">
+              <div className="game-panel p-8">
                 <p className="text-sm text-indigo-300 mb-3">人格亮点</p>
                 <h2 className="text-2xl font-bold mb-4">你适合怎样的搭子关系？</h2>
                 <p className="text-gray-300 leading-8 mb-6">
@@ -245,7 +270,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-6">
-              <div className="bg-[#2b2f33] rounded-3xl shadow-2xl p-6">
+              <div className="game-panel p-6">
                 <p className="text-sm text-indigo-300 mb-4">数据概览</p>
                 <div className="grid grid-cols-2 gap-4">
                   <StatCard label="人格代号" value={result.code} />
@@ -255,7 +280,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="bg-[#2b2f33] rounded-3xl shadow-2xl p-6">
+              <div className="game-panel p-6">
                 <p className="text-sm text-indigo-300 mb-4">常玩游戏</p>
 
                 {topGames.length > 0 ? (
@@ -281,7 +306,7 @@ export default function ProfilePage() {
                 )}
               </div>
 
-              <div className="bg-[#2b2f33] rounded-3xl shadow-2xl p-6">
+              <div className="game-panel p-6">
                 <div className="flex items-center justify-between mb-4">
                   <p className="text-sm text-indigo-300">最近游戏生涯</p>
                   <button
@@ -306,7 +331,7 @@ export default function ProfilePage() {
                 )}
               </div>
 
-              <div className="bg-[#2b2f33] rounded-3xl shadow-2xl p-6">
+              <div className="game-panel p-6">
                 <div className="flex items-center justify-between mb-4">
                   <p className="text-sm text-indigo-300">最近游戏 Vlog</p>
                   <button

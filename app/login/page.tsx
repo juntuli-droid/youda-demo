@@ -87,8 +87,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex bg-[#1e2124] text-white">
-      <aside className="w-20 bg-[#17191c] flex flex-col items-center py-6 space-y-4">
+    <div className="game-shell">
+      <aside className="game-sidebar flex flex-col items-center py-6 space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-lg font-bold">
           有搭
         </div>
@@ -97,7 +97,7 @@ export default function LoginPage() {
       </aside>
 
       <main className="flex-1 flex items-center justify-center px-6 py-10">
-        <div className="w-full max-w-md bg-[#2b2f33] rounded-3xl shadow-2xl p-10">
+        <div className="w-full max-w-md game-panel p-10 motion-fade-in">
           <div className="mb-10">
             <p className="text-sm text-indigo-300 mb-3">手机号登录</p>
             <h1 className="text-4xl font-bold mb-3">欢迎回来</h1>
@@ -112,7 +112,7 @@ export default function LoginPage() {
                 value={form.phone}
                 onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
                 placeholder="请输入 11 位手机号"
-                className="w-full bg-[#363b42] border border-[#4a515b] rounded-xl px-4 py-3 text-white placeholder:text-gray-500 outline-none"
+                className="neon-input"
               />
             </InputGroup>
 
@@ -124,7 +124,7 @@ export default function LoginPage() {
                 }
                 type="password"
                 placeholder="请输入密码"
-                className="w-full bg-[#363b42] border border-[#4a515b] rounded-xl px-4 py-3 text-white placeholder:text-gray-500 outline-none"
+                className="neon-input"
               />
             </InputGroup>
 
@@ -134,7 +134,7 @@ export default function LoginPage() {
                   value={captchaAnswer}
                   onChange={(e) => setCaptchaAnswer(e.target.value)}
                   placeholder="请输入验证码"
-                  className="w-full bg-[#363b42] border border-[#4a515b] rounded-xl px-4 py-3 text-white placeholder:text-gray-500 outline-none"
+                  className="neon-input"
                 />
               </InputGroup>
             ) : null}
@@ -148,14 +148,14 @@ export default function LoginPage() {
             <button
               onClick={handleSubmit}
               disabled={!canSubmit || submitting}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold text-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-4 font-semibold text-lg neon-btn disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? "登录中..." : "登录并继续"}
             </button>
 
             <button
               onClick={() => router.push("/register")}
-              className="w-full py-4 rounded-2xl bg-[#363b42] border border-[#4a515b] text-gray-300 hover:bg-[#414751] transition"
+              className="w-full py-4 neon-outline-btn"
             >
               没有账号？去注册
             </button>
