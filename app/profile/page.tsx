@@ -211,7 +211,13 @@ export default function ProfilePage() {
   )
   const totalPages = Math.max(Math.ceil(filteredAvatarItems.length / pageSize), 1)
   const handleOpenAddBadge = () => {
-    router.push("/profile/add-badge")
+    if (canManageBadge) {
+      router.push("/profile/add-badge")
+      return
+    }
+    setToast("请先登录后添加标签/奖牌")
+    setTimeout(() => setToast(""), 1600)
+    router.push("/login")
   }
   const handleBadgeEdit = (badge: BadgeItem) => {
     if (!canManageBadge) return

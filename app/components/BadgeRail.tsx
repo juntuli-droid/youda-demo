@@ -23,11 +23,12 @@ export default function BadgeRail({ badges, canManage, onAdd, onEdit }: BadgeRai
             className="rounded-xl"
           />
           <div className="text-sm text-gray-300">暂无标签，去添加</div>
-          {canManage ? (
-            <button onClick={onAdd} className="neon-btn px-3 py-2 text-sm">
-              + 添加标签/奖牌
-            </button>
-          ) : null}
+          <button
+            onClick={onAdd}
+            className={`${canManage ? "neon-btn" : "neon-outline-btn"} px-3 py-2 text-sm`}
+          >
+            {canManage ? "+ 添加标签/奖牌" : "+ 登录后添加"}
+          </button>
         </div>
       </div>
     )
@@ -37,11 +38,12 @@ export default function BadgeRail({ badges, canManage, onAdd, onEdit }: BadgeRai
     <div className="game-panel p-4">
       <div className="flex items-center justify-between mb-3">
         <p className="text-sm text-indigo-300">标签 / 奖牌</p>
-        {canManage ? (
-          <button onClick={onAdd} className="neon-outline-btn px-3 py-1.5 text-sm">
-            + 添加标签/奖牌
-          </button>
-        ) : null}
+        <button
+          onClick={onAdd}
+          className={`${canManage ? "neon-outline-btn" : "neon-outline-btn opacity-90"} px-3 py-1.5 text-sm`}
+        >
+          {canManage ? "+ 添加标签/奖牌" : "+ 登录后添加"}
+        </button>
       </div>
       <div className="overflow-x-auto">
         <div className="flex gap-3 min-w-max pr-2">
