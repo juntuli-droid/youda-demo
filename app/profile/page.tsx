@@ -19,6 +19,7 @@ import { getAvatarPathByCharacter, getAvatarFileByCharacter } from "../lib/gameC
 import { resolvePersonalityAvatarFromScores } from "../lib/personalityAvatarResolver"
 import { createAutogenBadgesFromCareer } from "../lib/autoBadgeSync"
 import {
+  hasBadgeManagePermission,
   loadBadgeStore,
   removeBadgeById,
   saveBadgeStore,
@@ -139,7 +140,7 @@ export default function ProfilePage() {
     }
     saveBadgeStore(nextBadgeStore)
     setBadgeList(toDisplayBadges(nextBadgeStore))
-    setCanManageBadge(Boolean(localStorage.getItem("authAccessToken")))
+    setCanManageBadge(hasBadgeManagePermission())
 
     if (!raw || !metaRaw || !currentSessionId) {
       const src = "/images/avatars/default.png"

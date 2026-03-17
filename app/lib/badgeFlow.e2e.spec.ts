@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import {
   addManualBadge,
+  hasBadgeManagePermission,
   loadBadgeStore,
   removeBadgeById,
   toDisplayBadges
@@ -50,5 +51,13 @@ describe("badge flow e2e (manual add -> display -> delete)", () => {
       JSON.stringify({ phone: "13800000002", nickname: "B", provider: "phone" })
     )
     expect(loadBadgeStore().manualBadges.length).toBe(0)
+  })
+
+  it("grants badge manage permission when profile exists without token", () => {
+    localStorage.setItem(
+      "authUserProfile",
+      JSON.stringify({ phone: "13800000003", nickname: "C", provider: "phone" })
+    )
+    expect(hasBadgeManagePermission()).toBe(true)
   })
 })

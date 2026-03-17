@@ -36,6 +36,13 @@ function getBadgeStorageKey() {
   }
 }
 
+export function hasBadgeManagePermission() {
+  if (typeof window === "undefined") return false
+  const token = localStorage.getItem("authAccessToken")
+  const profile = localStorage.getItem("authUserProfile")
+  return Boolean(token || profile)
+}
+
 export function loadBadgeStore() {
   if (typeof window === "undefined") return toStore()
   const raw = localStorage.getItem(getBadgeStorageKey())
